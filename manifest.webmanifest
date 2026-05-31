@@ -1,0 +1,9 @@
+﻿{
+  "name": "我的旅行",
+  "short_name": "我的旅行",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ecfeff",
+  "theme_color": "#0f766e",
+  "lang": "zh-Hant"
+}

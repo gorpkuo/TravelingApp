@@ -1,0 +1,11 @@
+﻿flowchart TD
+    UI[Presentation Layer\nindex.html + styles.css]
+    APP[Application Layer\napp.js route/state/actions]
+    DOMAIN[Domain Layer\nTrip/Day/Spot model rules]
+    INFRA[Infrastructure Layer\nmanifest + service worker]
+    DB[(Persistence Layer\nIndexedDB - next phase)]
+
+    UI --> APP
+    APP --> DOMAIN
+    APP --> INFRA
+    APP --> DB
