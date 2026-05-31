@@ -7,6 +7,29 @@
 const views = [...document.querySelectorAll('.view')];
 const tripListEl = document.getElementById('tripList');
 const dayListEl = document.getElementById('dayList');
+const exportJsonBtn = document.getElementById('exportJson');
+const importJsonBtn = document.getElementById('importJsonBtn');
+const importJsonFile = document.getElementById('importJsonFile');
+const todoListEl = document.getElementById('todoList');
+const todoInputEl = document.getElementById('todoInput');
+const trafficListEl = document.getElementById('trafficList');
+const trafficTypeInputEl = document.getElementById('trafficTypeInput');
+const trafficCustomTypeInputEl = document.getElementById('trafficCustomTypeInput');
+const addTrafficTypeBtnEl = document.getElementById('addTrafficTypeBtn');
+const trafficTypeManageListEl = document.getElementById('trafficTypeManageList');
+const trafficNoteInputEl = document.getElementById('trafficNoteInput');
+const trafficBookingInputEl = document.getElementById('trafficBookingInput');
+const trafficRideTimeInputEl = document.getElementById('trafficRideTimeInput');
+const trafficPaymentInputEl = document.getElementById('trafficPaymentInput');
+const DEFAULT_TRAFFIC_TYPES = ['開車', '地鐵', '火車', '巴士', '走路', '飛機'];
+
+async function persistTrips() {
+  try {
+    await saveTripsToDb(state.trips);
+  } catch {
+    alert('儲存失敗，請稍後重試');
+  }
+}
 
 function uid(prefix) {
   return `${prefix}_${Date.now()}_${Math.random().toString(16).slice(2, 6)}`;
@@ -20,13 +43,36 @@ function formatDate(dateStr) {
   return dateStr.replaceAll('-', '/');
 }
 
+function backupDate() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function downloadJson(filename, data) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 function buildDays(startDate, endDate) {
-  const start = new Date(`${startDate}T00:00:00`);
-  const end = new Date(`${endDate}T00:00:00`);
+  const [startY, startM, startD] = startDate.split('-').map(Number);
+  const [endY, endM, endD] = endDate.split('-').map(Number);
+  const start = new Date(startY, startM - 1, startD);
+  const end = new Date(endY, endM - 1, endD);
   const days = [];
   let i = 1;
   for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    const iso = d.toISOString().slice(0, 10);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dayNum = String(d.getDate()).padStart(2, '0');
+    const iso = `${y}-${m}-${dayNum}`;
     days.push({
       id: uid('day'),
       date: iso,
@@ -51,6 +97,237 @@ function currentDay() {
   return trip.days.find(d => d.id === state.currentDayId);
 }
 
+function ensureTodo(trip) {
+  if (!Array.isArray(trip.todo)) {
+    trip.todo = [];
+  }
+}
+
+function renderTodo() {
+  const trip = currentTrip();
+  todoListEl.innerHTML = '';
+  if (!trip) return;
+  ensureTodo(trip);
+
+  if (!trip.todo.length) {
+    todoListEl.innerHTML = '<div class="panel">目前沒有待辦項目</div>';
+    return;
+  }
+
+  trip.todo.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'panel';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr auto auto';
+    row.style.alignItems = 'center';
+    row.style.gap = '8px';
+
+    const text = document.createElement('span');
+    text.textContent = item.text;
+    text.style.textDecoration = item.done ? 'line-through' : 'none';
+    text.style.opacity = item.done ? '0.55' : '1';
+
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'btn btn-light';
+    toggleBtn.textContent = item.done ? '取消完成' : '完成';
+    toggleBtn.addEventListener('click', async () => {
+      item.done = !item.done;
+      await persistTrips();
+      renderTodo();
+    });
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-light';
+    deleteBtn.textContent = '刪除';
+    deleteBtn.addEventListener('click', async () => {
+      trip.todo = trip.todo.filter(t => t.id !== item.id);
+      await persistTrips();
+      renderTodo();
+    });
+
+    row.appendChild(text);
+    row.appendChild(toggleBtn);
+    row.appendChild(deleteBtn);
+    todoListEl.appendChild(row);
+  });
+}
+
+function ensureTraffic(trip) {
+  if (!Array.isArray(trip.traffic)) {
+    trip.traffic = [];
+  }
+}
+
+function ensureTrafficTypeOptions(trip) {
+  if (!Array.isArray(trip.trafficTypeOptions)) {
+    trip.trafficTypeOptions = [...DEFAULT_TRAFFIC_TYPES];
+  }
+}
+
+function normalizeTrafficTypeOptions(trip) {
+  ensureTrafficTypeOptions(trip);
+  const unique = [];
+  [...DEFAULT_TRAFFIC_TYPES, ...trip.trafficTypeOptions].forEach((name) => {
+    const n = String(name || '').trim();
+    if (!n) return;
+    if (!unique.includes(n)) unique.push(n);
+  });
+  trip.trafficTypeOptions = unique;
+}
+
+async function addCustomTrafficType() {
+  const trip = currentTrip();
+  if (!trip) return;
+  normalizeTrafficTypeOptions(trip);
+
+  const custom = trafficCustomTypeInputEl.value.trim();
+  if (!custom) {
+    alert('請輸入自訂交通工具');
+    return;
+  }
+  if (trip.trafficTypeOptions.includes(custom)) {
+    alert('此交通工具已存在');
+    trafficTypeInputEl.value = custom;
+    return;
+  }
+
+  trip.trafficTypeOptions.push(custom);
+  renderTrafficTypeOptions();
+  renderTrafficTypeManageList();
+  trafficTypeInputEl.value = custom;
+  trafficCustomTypeInputEl.value = '';
+  await persistTrips();
+  alert(`已加入交通工具：${custom}`);
+}
+
+function renderTrafficTypeOptions() {
+  const trip = currentTrip();
+  if (!trip) return;
+  normalizeTrafficTypeOptions(trip);
+
+  const selected = trafficTypeInputEl.value;
+  trafficTypeInputEl.innerHTML = '';
+  trip.trafficTypeOptions.forEach((name) => {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    trafficTypeInputEl.appendChild(opt);
+  });
+  if (trip.trafficTypeOptions.includes(selected)) {
+    trafficTypeInputEl.value = selected;
+  }
+}
+
+function isDefaultTrafficType(name) {
+  return DEFAULT_TRAFFIC_TYPES.includes(name);
+}
+
+function isTrafficTypeUsed(trip, typeName) {
+  return (trip.traffic || []).some((item) => item.type === typeName);
+}
+
+function renderTrafficTypeManageList() {
+  const trip = currentTrip();
+  trafficTypeManageListEl.innerHTML = '';
+  if (!trip) return;
+  normalizeTrafficTypeOptions(trip);
+  const customOptions = trip.trafficTypeOptions.filter((name) => !isDefaultTrafficType(name));
+
+  if (!customOptions.length) {
+    return;
+  }
+
+  customOptions.forEach((name) => {
+    const row = document.createElement('div');
+    row.className = 'panel';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr auto';
+    row.style.gap = '8px';
+    row.style.alignItems = 'center';
+
+    const label = document.createElement('span');
+    label.textContent = name;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-light';
+    deleteBtn.textContent = '刪除';
+
+    if (isTrafficTypeUsed(trip, name)) {
+      deleteBtn.disabled = true;
+      deleteBtn.textContent = '使用中';
+    } else {
+      deleteBtn.addEventListener('click', async () => {
+        trip.trafficTypeOptions = trip.trafficTypeOptions.filter((t) => t !== name);
+        renderTrafficTypeOptions();
+        renderTrafficTypeManageList();
+        await persistTrips();
+      });
+    }
+
+    row.appendChild(label);
+    row.appendChild(deleteBtn);
+    trafficTypeManageListEl.appendChild(row);
+  });
+}
+
+function renderTraffic() {
+  const trip = currentTrip();
+  trafficListEl.innerHTML = '';
+  if (!trip) return;
+  ensureTraffic(trip);
+  renderTrafficTypeOptions();
+  renderTrafficTypeManageList();
+
+  if (!trip.traffic.length) {
+    trafficListEl.innerHTML = '<div class="panel">目前沒有交通項目</div>';
+    return;
+  }
+
+  trip.traffic.forEach(item => {
+    const booking = item.booking || '未訂購';
+    const rideTime = formatRideTime(item.rideTime);
+    const payment = item.payment || '未付款';
+    const bookingClass = booking === '已訂購' ? 'badge-booked' : 'badge-unbooked';
+
+    const row = document.createElement('div');
+    row.className = 'panel';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr auto';
+    row.style.gap = '8px';
+    row.style.alignItems = 'center';
+
+    const info = document.createElement('div');
+    info.innerHTML = `<strong>${item.type}</strong><br>訂購：<span class="status-badge ${bookingClass}">${booking}</span>｜搭乘時間：${rideTime}｜付款：${payment}<br>${item.note || '（無備註）'}`;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-light';
+    deleteBtn.textContent = '刪除';
+    deleteBtn.addEventListener('click', async () => {
+      trip.traffic = trip.traffic.filter(t => t.id !== item.id);
+      await persistTrips();
+      renderTraffic();
+      renderTrafficTypeManageList();
+    });
+
+    row.appendChild(info);
+    row.appendChild(deleteBtn);
+    trafficListEl.appendChild(row);
+  });
+}
+
+function formatRideTime(raw) {
+  if (!raw) return '未設定';
+  // New format from datetime-local: 2026-06-24T09:15
+  if (raw.includes('T')) {
+    const [d, t] = raw.split('T');
+    if (d && t) {
+      return `${d.replaceAll('-', '/')} ${t}`;
+    }
+  }
+  // Backward compatible for legacy value (time-only or unknown format)
+  return raw;
+}
+
 function renderTrips() {
   tripListEl.innerHTML = '';
   if (!state.trips.length) {
@@ -59,15 +336,39 @@ function renderTrips() {
   }
 
   state.trips.forEach(trip => {
-    const btn = document.createElement('button');
-    btn.className = 'btn panel';
-    btn.innerHTML = `<strong>${trip.name}</strong><br>${trip.country}｜${trip.region}<br>${trip.startDate} - ${trip.endDate}`;
-    btn.addEventListener('click', () => {
+    const card = document.createElement('div');
+    card.className = 'panel';
+
+    const openBtn = document.createElement('button');
+    openBtn.className = 'btn';
+    openBtn.style.width = '100%';
+    openBtn.style.marginBottom = '8px';
+    openBtn.innerHTML = `<strong>${trip.name}</strong><br>${trip.country}｜${trip.region}<br>${trip.startDate} - ${trip.endDate}`;
+    openBtn.addEventListener('click', () => {
       state.currentTripId = trip.id;
       document.getElementById('tripMainTitle').textContent = trip.name;
       show('trip-main');
     });
-    tripListEl.appendChild(btn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-light';
+    deleteBtn.textContent = '刪除旅程';
+    deleteBtn.addEventListener('click', async () => {
+      const ok = confirm(`確定刪除「${trip.name}」？此動作無法復原。`);
+      if (!ok) return;
+
+      state.trips = state.trips.filter(t => t.id !== trip.id);
+      if (state.currentTripId === trip.id) {
+        state.currentTripId = null;
+        state.currentDayId = null;
+      }
+      await persistTrips();
+      renderTrips();
+    });
+
+    card.appendChild(openBtn);
+    card.appendChild(deleteBtn);
+    tripListEl.appendChild(card);
   });
 }
 
@@ -130,10 +431,12 @@ document.getElementById('newTripForm').addEventListener('submit', (e) => {
     days: buildDays(startDate, endDate),
     todo: [],
     food: [],
-    traffic: []
+    traffic: [],
+    trafficTypeOptions: [...DEFAULT_TRAFFIC_TYPES]
   };
 
   state.trips.push(trip);
+  persistTrips();
   state.currentTripId = trip.id;
   document.getElementById('tripMainTitle').textContent = trip.name;
   e.target.reset();
@@ -143,6 +446,72 @@ document.getElementById('newTripForm').addEventListener('submit', (e) => {
 document.getElementById('openSchedule').addEventListener('click', () => {
   renderDays();
   show('schedule-days');
+});
+
+document.getElementById('openTodo').addEventListener('click', () => {
+  renderTodo();
+  show('todo-view');
+});
+
+document.getElementById('openTraffic').addEventListener('click', () => {
+  renderTraffic();
+  show('traffic-view');
+});
+
+document.getElementById('backToTripMainFromTraffic').addEventListener('click', () => show('trip-main'));
+
+addTrafficTypeBtnEl.addEventListener('click', addCustomTrafficType);
+trafficCustomTypeInputEl.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    addCustomTrafficType();
+  }
+});
+
+document.getElementById('addTrafficBtn').addEventListener('click', async () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  ensureTraffic(trip);
+
+  const type = trafficTypeInputEl.value;
+  const note = trafficNoteInputEl.value.trim();
+  const booking = trafficBookingInputEl.value;
+  const rideTime = trafficRideTimeInputEl.value;
+  const payment = trafficPaymentInputEl.value;
+  trip.traffic.push({
+    id: uid('traffic'),
+    type,
+    note,
+    booking,
+    rideTime,
+    payment
+  });
+  trafficNoteInputEl.value = '';
+  trafficBookingInputEl.value = '未訂購';
+  trafficRideTimeInputEl.value = '';
+  trafficPaymentInputEl.value = '未付款';
+  await persistTrips();
+  renderTraffic();
+  renderTrafficTypeManageList();
+});
+
+document.getElementById('backToTripMainFromTodo').addEventListener('click', () => show('trip-main'));
+
+document.getElementById('addTodoBtn').addEventListener('click', async () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  ensureTodo(trip);
+
+  const text = todoInputEl.value.trim();
+  if (!text) {
+    alert('請輸入待辦內容');
+    return;
+  }
+
+  trip.todo.push({ id: uid('todo'), text, done: false });
+  todoInputEl.value = '';
+  await persistTrips();
+  renderTodo();
 });
 
 document.getElementById('backToTripMain').addEventListener('click', () => show('trip-main'));
@@ -167,6 +536,7 @@ document.getElementById('confirmSpot').addEventListener('click', () => {
   }
 
   day.spots.push(spot);
+  persistTrips();
   const next = confirm('是否要繼續編輯下一筆景點？');
   if (next) {
     document.getElementById('spotName').value = '';
@@ -188,9 +558,43 @@ document.getElementById('saveDay').addEventListener('click', () => {
   day.transport.type = document.getElementById('transportType').value;
   day.transport.note = document.getElementById('transportNote').value.trim();
   day.dailyNote = document.getElementById('dailyNote').value.trim();
+  persistTrips();
 
   alert('已儲存當天行程');
   show('schedule-days');
+});
+
+exportJsonBtn.addEventListener('click', () => {
+  const filename = `my-travel-backup-${backupDate()}.json`;
+  downloadJson(filename, { trips: state.trips });
+});
+
+importJsonBtn.addEventListener('click', () => {
+  importJsonFile.value = '';
+  importJsonFile.click();
+});
+
+importJsonFile.addEventListener('change', async (e) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    if (!parsed || !Array.isArray(parsed.trips)) {
+      alert('JSON 格式錯誤：缺少 trips 陣列');
+      return;
+    }
+
+    state.trips = parsed.trips;
+    state.currentTripId = null;
+    state.currentDayId = null;
+    await persistTrips();
+    renderTrips();
+    alert('匯入成功');
+  } catch {
+    alert('匯入失敗，請確認 JSON 內容');
+  }
 });
 
 if ('serviceWorker' in navigator) {
@@ -198,3 +602,13 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   });
 }
+
+async function init() {
+  try {
+    state.trips = await loadTripsFromDb();
+  } catch {
+    state.trips = [];
+  }
+}
+
+init();

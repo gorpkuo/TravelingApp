@@ -157,3 +157,16 @@ After completing an approved coding task, the agent must report:
 4. Any follow-up topics that remain.
 
 The report should remain focused on the current topic only.
+
+---
+
+## 11. Windows Execution Rule (.bat First)
+
+For this project, repeatable operations on Windows must be packaged as `.bat` scripts whenever practical.
+
+The agent must follow:
+
+1. For startup, test, build, or other repeated commands, prefer creating/updating a `.bat` entry script.
+2. If a corresponding `.bat` already exists, responses and docs should prioritize the `.bat` usage instead of raw command lines.
+3. When adding a new workflow that users are expected to run manually, provide a `.bat` file in the project root when feasible.
+4. Keep `.bat` scripts small and focused (one purpose per script), and use clear file names.

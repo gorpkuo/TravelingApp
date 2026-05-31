@@ -9,21 +9,28 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="app">
-    <section id="home" class="view active">
-      <h1 class="title">我的旅行</h1>
-      <div class="stack">
+  <main class="app-shell">
+    <section id="home" class="view page active">
+      <div class="hero-card">
+        <p class="eyebrow">Travel Planner PWA</p>
+        <h1 class="title">我的旅行</h1>
+        <p class="subtitle">手機優先、離線可用、私人行程管理</p>
+      </div>
+      <div class="stack actions">
         <button class="btn btn-3d" data-go="new-trip">開啟新旅程</button>
-        <button class="btn btn-3d" data-go="trips">瀏覽旅程</button>
+        <button class="btn btn-ghost" data-go="trips">瀏覽旅程</button>
       </div>
     </section>
 
-    <section id="new-trip" class="view">
-      <header class="header-row">
+    <section id="new-trip" class="view page">
+      <header class="page-head">
         <button class="btn btn-light" data-go="home">返回</button>
-        <h2>建立新旅程</h2>
+        <div>
+          <h2>建立新旅程</h2>
+          <p>輸入基本資訊後自動產生 Day 行程。</p>
+        </div>
       </header>
-      <form id="newTripForm" class="panel form">
+      <form id="newTripForm" class="panel form soft-shadow">
         <label>名稱<input name="name" required placeholder="義大利親子旅行"></label>
         <label>國家<input name="country" required placeholder="義大利"></label>
         <label>地區<input name="region" required placeholder="米蘭、威尼斯"></label>
@@ -33,49 +40,132 @@
       </form>
     </section>
 
-    <section id="trips" class="view">
-      <header class="header-row">
+    <section id="trips" class="view page">
+      <header class="page-head">
         <button class="btn btn-light" data-go="home">返回</button>
-        <h2>瀏覽旅程</h2>
+        <div>
+          <h2>瀏覽旅程</h2>
+          <p>選擇旅程，或做備份匯出/匯入。</p>
+        </div>
       </header>
-      <div id="tripList" class="stack"></div>
+      <div class="grid-2 utility-row">
+        <button class="btn btn-3d" id="exportJson" type="button">匯出 JSON</button>
+        <button class="btn btn-ghost" id="importJsonBtn" type="button">匯入 JSON</button>
+        <input id="importJsonFile" type="file" accept=".json,application/json" hidden>
+      </div>
+      <div id="tripList" class="stack trip-list"></div>
     </section>
 
-    <section id="trip-main" class="view">
-      <header class="header-row">
+    <section id="trip-main" class="view page">
+      <header class="page-head">
         <button class="btn btn-light" data-go="trips">返回</button>
-        <h2 id="tripMainTitle">旅程主頁</h2>
+        <div>
+          <h2 id="tripMainTitle">旅程主頁</h2>
+          <p>先完成行程骨架，其餘模組後續擴充。</p>
+        </div>
       </header>
-      <div class="grid-2">
-        <button class="btn">交通</button>
-        <button class="btn">美食</button>
-        <button class="btn">待辦</button>
+      <div class="grid-2 feature-grid">
+        <button class="btn feature" id="openTraffic">交通</button>
+        <button class="btn feature">美食</button>
+        <button class="btn feature" id="openTodo">待辦</button>
         <button class="btn btn-3d" id="openSchedule">行程</button>
       </div>
     </section>
 
-    <section id="schedule-days" class="view">
-      <header class="header-row">
+    <section id="traffic-view" class="view page">
+      <header class="page-head">
+        <button class="btn btn-light" id="backToTripMainFromTraffic">返回</button>
+        <div>
+          <h2>交通規劃</h2>
+          <p>管理此旅程的交通工具與備註。</p>
+        </div>
+      </header>
+      <div class="panel soft-shadow">
+        <label>交通工具
+          <select id="trafficTypeInput">
+            <option>開車</option>
+            <option>地鐵</option>
+            <option>火車</option>
+            <option>巴士</option>
+            <option>走路</option>
+            <option>飛機</option>
+          </select>
+        </label>
+        <label>自訂交通工具
+          <input id="trafficCustomTypeInput" placeholder="例如：計程車、渡輪、纜車">
+        </label>
+        <button class="btn btn-light" id="addTrafficTypeBtn" type="button">加入選單</button>
+        <div id="trafficTypeManageList" class="stack"></div>
+        <label>備註
+          <textarea id="trafficNoteInput" rows="2" placeholder="例如：09:15 從米蘭中央車站出發"></textarea>
+        </label>
+        <label>訂購
+          <select id="trafficBookingInput">
+            <option>未訂購</option>
+            <option>已訂購</option>
+          </select>
+        </label>
+        <label>搭乘日期時間（可空白）
+          <input id="trafficRideTimeInput" type="datetime-local">
+        </label>
+        <label>付款
+          <select id="trafficPaymentInput">
+            <option>未付款</option>
+            <option>信用卡</option>
+            <option>現金</option>
+            <option>其他</option>
+          </select>
+        </label>
+        <button class="btn btn-3d" id="addTrafficBtn" type="button">新增交通項目</button>
+      </div>
+      <div id="trafficList" class="stack"></div>
+    </section>
+
+    <section id="todo-view" class="view page">
+      <header class="page-head">
+        <button class="btn btn-light" id="backToTripMainFromTodo">返回</button>
+        <div>
+          <h2>待辦清單</h2>
+          <p>新增、勾選完成、刪除不需要的項目。</p>
+        </div>
+      </header>
+      <div class="panel soft-shadow">
+        <label>新增待辦
+          <input id="todoInput" placeholder="例如：護照、機票、保險">
+        </label>
+        <button class="btn btn-3d" id="addTodoBtn" type="button">新增待辦</button>
+      </div>
+      <div id="todoList" class="stack"></div>
+    </section>
+
+    <section id="schedule-days" class="view page">
+      <header class="page-head">
         <button class="btn btn-light" id="backToTripMain">返回</button>
-        <h2>行程日期</h2>
+        <div>
+          <h2>行程日期</h2>
+          <p>先選擇 Day，再進入當天編輯。</p>
+        </div>
       </header>
       <div id="dayList" class="stack"></div>
     </section>
 
-    <section id="day-editor" class="view">
-      <header class="header-row">
+    <section id="day-editor" class="view page">
+      <header class="page-head">
         <button class="btn btn-light" id="backToDays">返回</button>
-        <h2 id="dayEditorTitle">當天行程</h2>
+        <div>
+          <h2 id="dayEditorTitle">當天行程</h2>
+          <p>分成食、景、行、備註四區快速編輯。</p>
+        </div>
       </header>
 
-      <div class="panel">
+      <div class="panel soft-shadow">
         <h3>食</h3>
         <label>早餐<input id="mealBreakfast" placeholder="猶豫中"></label>
         <label>午餐<input id="mealLunch" placeholder="猶豫中"></label>
         <label>晚餐<input id="mealDinner" placeholder="猶豫中"></label>
       </div>
 
-      <div class="panel">
+      <div class="panel soft-shadow">
         <h3>景</h3>
         <label>景點名稱<input id="spotName"></label>
         <label>預計時間<input id="spotTime" type="time"></label>
@@ -84,7 +174,7 @@
         <button class="btn btn-3d" id="confirmSpot" type="button">確認</button>
       </div>
 
-      <div class="panel">
+      <div class="panel soft-shadow">
         <h3>行</h3>
         <label>交通工具
           <select id="transportType">
@@ -99,7 +189,7 @@
         <label>交通備註<textarea id="transportNote" rows="2"></textarea></label>
       </div>
 
-      <div class="panel">
+      <div class="panel soft-shadow">
         <h3>備註事項</h3>
         <textarea id="dailyNote" rows="3" placeholder="自由輸入"></textarea>
       </div>
@@ -108,6 +198,7 @@
     </section>
   </main>
 
+  <script src="db.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
