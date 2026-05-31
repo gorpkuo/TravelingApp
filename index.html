@@ -34,6 +34,13 @@
         <label>名稱<input name="name" required placeholder="義大利親子旅行"></label>
         <label>國家<input name="country" required placeholder="義大利"></label>
         <label>地區<input name="region" required placeholder="米蘭、威尼斯"></label>
+        <label>風格
+          <select name="theme">
+            <option value="mediterranean">地中海亮色</option>
+            <option value="sunset">日落撞色</option>
+            <option value="neon">都會霓虹</option>
+          </select>
+        </label>
         <label>出發時間<input name="startDate" type="date" required></label>
         <label>回程時間<input name="endDate" type="date" required></label>
         <button class="btn btn-3d" type="submit">確定</button>
@@ -57,19 +64,54 @@
     </section>
 
     <section id="trip-main" class="view page">
-      <header class="page-head">
+      <header class="page-head trip-main-head">
         <button class="btn btn-light" data-go="trips">返回</button>
         <div>
           <h2 id="tripMainTitle">旅程主頁</h2>
           <p>先完成行程骨架，其餘模組後續擴充。</p>
         </div>
       </header>
-      <div class="grid-2 feature-grid">
-        <button class="btn feature" id="openTraffic">交通</button>
-        <button class="btn feature">美食</button>
-        <button class="btn feature" id="openTodo">待辦</button>
+      <div class="grid-2 feature-grid trip-main-grid">
+        <button class="btn feature trip-main-btn" id="openTraffic">交通</button>
+        <button class="btn feature trip-main-btn" id="openFood">美食</button>
+        <button class="btn feature trip-main-btn" id="openTodo">待辦</button>
         <button class="btn btn-3d" id="openSchedule">行程</button>
       </div>
+    </section>
+
+    <section id="food-view" class="view page">
+      <header class="page-head">
+        <button class="btn btn-light" id="backToTripMainFromFood">返回</button>
+        <div>
+          <h2>美食規劃</h2>
+          <p>依地區管理餐廳與訂位資訊。</p>
+        </div>
+      </header>
+      <div class="panel soft-shadow">
+        <label>地區
+          <input id="foodRegionInput" placeholder="例如：佛羅倫斯、威尼斯">
+        </label>
+        <label>餐廳名稱
+          <input id="foodNameInput" placeholder="例如：Trattoria Mario">
+        </label>
+        <label>地址
+          <input id="foodAddressInput" placeholder="例如：Via Rosina 2r, Firenze">
+        </label>
+        <label>訂位日期時間（可空白）
+          <input id="foodBookingTimeInput" type="datetime-local">
+        </label>
+        <label>是否已訂位
+          <select id="foodBookedInput">
+            <option>未訂位</option>
+            <option>已訂位</option>
+          </select>
+        </label>
+        <label>備註
+          <textarea id="foodNoteInput" rows="2" placeholder="例如：4 人、靠窗、19:00"></textarea>
+        </label>
+        <button class="btn btn-3d" id="addFoodBtn" type="button">新增美食項目</button>
+      </div>
+      <div id="foodList" class="stack"></div>
     </section>
 
     <section id="traffic-view" class="view page">
@@ -166,16 +208,11 @@
       </div>
 
       <div class="panel soft-shadow">
-        <h3>景</h3>
+        <h3>景 / 行</h3>
         <label>景點名稱<input id="spotName"></label>
         <label>預計時間<input id="spotTime" type="time"></label>
         <label>地址<input id="spotAddress"></label>
         <label>備註<textarea id="spotNote" rows="2"></textarea></label>
-        <button class="btn btn-3d" id="confirmSpot" type="button">確認</button>
-      </div>
-
-      <div class="panel soft-shadow">
-        <h3>行</h3>
         <label>交通工具
           <select id="transportType">
             <option>開車</option>
@@ -187,6 +224,7 @@
           </select>
         </label>
         <label>交通備註<textarea id="transportNote" rows="2"></textarea></label>
+        <button class="btn btn-3d" id="confirmSpot" type="button">確認</button>
       </div>
 
       <div class="panel soft-shadow">
@@ -196,6 +234,68 @@
 
       <button class="btn btn-3d" id="saveDay" type="button">儲存當天行程</button>
     </section>
+
+    <section id="day-view" class="view page">
+      <header class="page-head">
+        <button class="btn btn-light" id="backToDaysFromView">返回</button>
+        <div>
+          <h2 id="dayViewTitle">當天行程總覽</h2>
+          <p>儲存後可在這裡快速瀏覽內容。</p>
+        </div>
+      </header>
+
+      <div class="panel soft-shadow panel-meals">
+        <h3>食</h3>
+        <div id="dayViewMeals"></div>
+      </div>
+
+      <div class="panel soft-shadow panel-spots">
+        <h3>景</h3>
+        <div id="dayViewSpots"></div>
+      </div>
+
+      <div class="panel soft-shadow panel-note">
+        <h3>備註事項</h3>
+        <div id="dayViewNote"></div>
+      </div>
+
+      <button class="btn btn-3d" id="editDayFromView" type="button">編輯此天</button>
+    </section>
+
+    <div id="spotEditModal" class="modal" aria-hidden="true">
+      <div class="modal-card">
+        <h3>景點修改</h3>
+        <label>景點名稱
+          <input id="spotEditName" type="text">
+        </label>
+        <label>時間
+          <input id="spotEditTime" type="time">
+        </label>
+        <label>地點
+          <input id="spotEditAddress" type="text">
+        </label>
+        <label>交通工具
+          <select id="spotEditTransportType">
+            <option>開車</option>
+            <option>地鐵</option>
+            <option>火車</option>
+            <option>巴士</option>
+            <option>走路</option>
+            <option>飛機</option>
+          </select>
+        </label>
+        <label>交通備註
+          <input id="spotEditTransportNote" type="text">
+        </label>
+        <label>備註
+          <textarea id="spotEditNote" rows="3"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button class="btn btn-3d" id="spotEditSaveBtn" type="button">確定</button>
+          <button class="btn btn-light" id="spotEditCancelBtn" type="button">取消</button>
+        </div>
+      </div>
+    </div>
   </main>
 
   <script src="db.js"></script>

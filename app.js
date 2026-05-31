@@ -12,6 +12,13 @@ const importJsonBtn = document.getElementById('importJsonBtn');
 const importJsonFile = document.getElementById('importJsonFile');
 const todoListEl = document.getElementById('todoList');
 const todoInputEl = document.getElementById('todoInput');
+const foodListEl = document.getElementById('foodList');
+const foodRegionInputEl = document.getElementById('foodRegionInput');
+const foodNameInputEl = document.getElementById('foodNameInput');
+const foodAddressInputEl = document.getElementById('foodAddressInput');
+const foodBookingTimeInputEl = document.getElementById('foodBookingTimeInput');
+const foodBookedInputEl = document.getElementById('foodBookedInput');
+const foodNoteInputEl = document.getElementById('foodNoteInput');
 const trafficListEl = document.getElementById('trafficList');
 const trafficTypeInputEl = document.getElementById('trafficTypeInput');
 const trafficCustomTypeInputEl = document.getElementById('trafficCustomTypeInput');
@@ -22,6 +29,31 @@ const trafficBookingInputEl = document.getElementById('trafficBookingInput');
 const trafficRideTimeInputEl = document.getElementById('trafficRideTimeInput');
 const trafficPaymentInputEl = document.getElementById('trafficPaymentInput');
 const DEFAULT_TRAFFIC_TYPES = ['開車', '地鐵', '火車', '巴士', '走路', '飛機'];
+const spotEditModalEl = document.getElementById('spotEditModal');
+const spotEditNameEl = document.getElementById('spotEditName');
+const spotEditTimeEl = document.getElementById('spotEditTime');
+const spotEditAddressEl = document.getElementById('spotEditAddress');
+const spotEditTransportTypeEl = document.getElementById('spotEditTransportType');
+const spotEditTransportNoteEl = document.getElementById('spotEditTransportNote');
+const spotEditNoteEl = document.getElementById('spotEditNote');
+const spotEditSaveBtnEl = document.getElementById('spotEditSaveBtn');
+const spotEditCancelBtnEl = document.getElementById('spotEditCancelBtn');
+let editingSpotId = null;
+
+function normalizeTheme(theme) {
+  return ['mediterranean', 'sunset', 'neon'].includes(theme) ? theme : 'mediterranean';
+}
+
+function setActiveTheme(theme) {
+  document.body.setAttribute('data-theme', normalizeTheme(theme));
+}
+
+function themeLabel(theme) {
+  const t = normalizeTheme(theme);
+  if (t === 'sunset') return '日落撞色';
+  if (t === 'neon') return '都會霓虹';
+  return '地中海亮色';
+}
 
 async function persistTrips() {
   try {
@@ -101,6 +133,66 @@ function ensureTodo(trip) {
   if (!Array.isArray(trip.todo)) {
     trip.todo = [];
   }
+}
+
+function ensureFood(trip) {
+  if (!Array.isArray(trip.food)) {
+    trip.food = [];
+  }
+}
+
+function formatDateTimeLocal(raw) {
+  if (!raw) return '未設定';
+  if (raw.includes('T')) {
+    const [d, t] = raw.split('T');
+    if (d && t) return `${d.replaceAll('-', '/')} ${t}`;
+  }
+  return raw;
+}
+
+function renderFood() {
+  const trip = currentTrip();
+  foodListEl.innerHTML = '';
+  if (!trip) return;
+  ensureFood(trip);
+
+  if (!trip.food.length) {
+    foodListEl.innerHTML = '<div class="panel">目前沒有美食項目</div>';
+    return;
+  }
+
+  trip.food.forEach((item) => {
+    const row = document.createElement('div');
+    row.className = 'panel';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr auto';
+    row.style.gap = '8px';
+    row.style.alignItems = 'center';
+
+    const region = item.region || '未分類';
+    const name = item.name || '未命名餐廳';
+    const address = item.address || '（無地址）';
+    const booked = item.booked || '未訂位';
+    const bookedClass = booked === '已訂位' ? 'badge-food-booked' : 'badge-food-unbooked';
+    const bookingTime = formatDateTimeLocal(item.bookingTime);
+    const note = item.note || '（無備註）';
+
+    const info = document.createElement('div');
+    info.innerHTML = `<strong>${region}｜${name}</strong><br>地址：${address}<br>訂位：<span class="status-badge ${bookedClass}">${booked}</span>｜時間：${bookingTime}<br>${note}`;
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-light';
+    deleteBtn.textContent = '刪除';
+    deleteBtn.addEventListener('click', async () => {
+      trip.food = trip.food.filter((f) => f.id !== item.id);
+      await persistTrips();
+      renderFood();
+    });
+
+    row.appendChild(info);
+    row.appendChild(deleteBtn);
+    foodListEl.appendChild(row);
+  });
 }
 
 function renderTodo() {
@@ -337,7 +429,7 @@ function renderTrips() {
 
   state.trips.forEach(trip => {
     const card = document.createElement('div');
-    card.className = 'panel';
+    card.className = `panel trip-card trip-theme-${normalizeTheme(trip.theme)}`;
 
     const openBtn = document.createElement('button');
     openBtn.className = 'btn';
@@ -346,6 +438,7 @@ function renderTrips() {
     openBtn.innerHTML = `<strong>${trip.name}</strong><br>${trip.country}｜${trip.region}<br>${trip.startDate} - ${trip.endDate}`;
     openBtn.addEventListener('click', () => {
       state.currentTripId = trip.id;
+      setActiveTheme(trip.theme);
       document.getElementById('tripMainTitle').textContent = trip.name;
       show('trip-main');
     });
@@ -366,7 +459,46 @@ function renderTrips() {
       renderTrips();
     });
 
+    const themeWrap = document.createElement('div');
+    themeWrap.style.display = 'grid';
+    themeWrap.style.gridTemplateColumns = '86px 1fr';
+    themeWrap.style.alignItems = 'center';
+    themeWrap.style.gap = '8px';
+    themeWrap.style.marginBottom = '8px';
+
+    const themeText = document.createElement('span');
+    themeText.textContent = '風格';
+
+    const themeSelect = document.createElement('select');
+    themeSelect.className = 'theme-select';
+    [
+      { value: 'mediterranean', label: '地中海亮色' },
+      { value: 'sunset', label: '日落撞色' },
+      { value: 'neon', label: '都會霓虹' }
+    ].forEach((opt) => {
+      const o = document.createElement('option');
+      o.value = opt.value;
+      o.textContent = opt.label;
+      themeSelect.appendChild(o);
+    });
+    themeSelect.value = normalizeTheme(trip.theme);
+    themeSelect.addEventListener('change', async () => {
+      trip.theme = normalizeTheme(themeSelect.value);
+      // Immediate preview: switching theme in trip list updates current UI instantly.
+      setActiveTheme(trip.theme);
+      state.currentTripId = trip.id;
+      await persistTrips();
+    });
+    themeText.title = `目前：${themeLabel(themeSelect.value)}`;
+    themeSelect.addEventListener('change', () => {
+      themeText.title = `目前：${themeLabel(themeSelect.value)}`;
+    });
+
+    themeWrap.appendChild(themeText);
+    themeWrap.appendChild(themeSelect);
+
     card.appendChild(openBtn);
+    card.appendChild(themeWrap);
     card.appendChild(deleteBtn);
     tripListEl.appendChild(card);
   });
@@ -378,16 +510,128 @@ function renderDays() {
   if (!trip) return;
 
   trip.days.forEach(day => {
-    const btn = document.createElement('button');
-    btn.className = 'btn panel';
-    btn.textContent = `${day.title}：${formatDate(day.date)}`;
-    btn.addEventListener('click', () => {
+    const row = document.createElement('div');
+    row.className = 'panel';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr auto auto';
+    row.style.gap = '8px';
+    row.style.alignItems = 'center';
+
+    const label = document.createElement('div');
+    label.textContent = `${day.title}：${formatDate(day.date)}`;
+
+    const viewBtn = document.createElement('button');
+    viewBtn.className = 'btn btn-light';
+    viewBtn.textContent = '查看';
+    viewBtn.addEventListener('click', () => {
+      state.currentDayId = day.id;
+      renderDayView();
+      show('day-view');
+    });
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn';
+    editBtn.textContent = '編輯';
+    editBtn.addEventListener('click', () => {
       state.currentDayId = day.id;
       loadDayEditor();
       show('day-editor');
     });
-    dayListEl.appendChild(btn);
+
+    row.appendChild(label);
+    row.appendChild(viewBtn);
+    row.appendChild(editBtn);
+    dayListEl.appendChild(row);
   });
+}
+
+function renderDayView() {
+  const day = currentDay();
+  if (!day) return;
+  document.getElementById('dayViewTitle').textContent = `${day.title} ${formatDate(day.date)}`;
+
+  document.getElementById('dayViewMeals').innerHTML =
+    `早餐：${day.meals.breakfast || '猶豫中'}<br>` +
+    `午餐：${day.meals.lunch || '猶豫中'}<br>` +
+    `晚餐：${day.meals.dinner || '猶豫中'}`;
+
+  renderDayViewSpots(day);
+
+  document.getElementById('dayViewNote').textContent = day.dailyNote || '（無備註）';
+}
+
+function renderDayViewSpots(day) {
+  const spotsEl = document.getElementById('dayViewSpots');
+  spotsEl.innerHTML = '';
+
+  if (!day.spots?.length) {
+    spotsEl.textContent = '目前沒有景點';
+    return;
+  }
+
+  day.spots.forEach((spot, i) => {
+    if (!spot.transport) {
+      spot.transport = { type: day.transport?.type || '開車', note: day.transport?.note || '' };
+    }
+
+    const row = document.createElement('div');
+    row.className = 'panel spot-card';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr auto auto';
+    row.style.gap = '8px';
+    row.style.alignItems = 'start';
+    row.style.marginBottom = '8px';
+
+    const info = document.createElement('div');
+    info.innerHTML =
+      `${i + 1}. ${spot.name}（${spot.time || '未設定時間'}）<br>` +
+      `${spot.address || '（無地址）'}<br>` +
+      `<span class="mini-tag mini-tag-traffic">交通：${spot.transport.type || '未設定'}</span> ` +
+      `<span class="mini-tag mini-tag-note">備註：${spot.transport.note || '（無備註）'}</span><br>` +
+      `${spot.note || '（無備註）'}`;
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-light';
+    editBtn.textContent = '編輯';
+    editBtn.addEventListener('click', () => openSpotEditModal(spot));
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-light';
+    deleteBtn.textContent = '刪除';
+    deleteBtn.addEventListener('click', async () => {
+      const ok = confirm(`確定刪除景點「${spot.name}」？`);
+      if (!ok) return;
+      day.spots = day.spots.filter((s) => s.id !== spot.id);
+      await persistTrips();
+      renderDayView();
+    });
+
+    row.appendChild(info);
+    row.appendChild(editBtn);
+    row.appendChild(deleteBtn);
+    spotsEl.appendChild(row);
+  });
+}
+
+function openSpotEditModal(spot) {
+  editingSpotId = spot.id;
+  if (!spot.transport) {
+    spot.transport = { type: '開車', note: '' };
+  }
+  spotEditNameEl.value = spot.name || '';
+  spotEditTimeEl.value = spot.time || '';
+  spotEditAddressEl.value = spot.address || '';
+  spotEditTransportTypeEl.value = spot.transport.type || '開車';
+  spotEditTransportNoteEl.value = spot.transport.note || '';
+  spotEditNoteEl.value = spot.note || '';
+  spotEditModalEl.classList.add('show');
+  spotEditModalEl.setAttribute('aria-hidden', 'false');
+}
+
+function closeSpotEditModal() {
+  editingSpotId = null;
+  spotEditModalEl.classList.remove('show');
+  spotEditModalEl.setAttribute('aria-hidden', 'true');
 }
 
 function loadDayEditor() {
@@ -426,6 +670,7 @@ document.getElementById('newTripForm').addEventListener('submit', (e) => {
     name: fd.get('name').trim(),
     country: fd.get('country').trim(),
     region: fd.get('region').trim(),
+    theme: normalizeTheme(fd.get('theme')),
     startDate,
     endDate,
     days: buildDays(startDate, endDate),
@@ -438,6 +683,7 @@ document.getElementById('newTripForm').addEventListener('submit', (e) => {
   state.trips.push(trip);
   persistTrips();
   state.currentTripId = trip.id;
+  setActiveTheme(trip.theme);
   document.getElementById('tripMainTitle').textContent = trip.name;
   e.target.reset();
   show('trip-main');
@@ -451,6 +697,50 @@ document.getElementById('openSchedule').addEventListener('click', () => {
 document.getElementById('openTodo').addEventListener('click', () => {
   renderTodo();
   show('todo-view');
+});
+
+document.getElementById('openFood').addEventListener('click', () => {
+  renderFood();
+  show('food-view');
+});
+
+document.getElementById('backToTripMainFromFood').addEventListener('click', () => show('trip-main'));
+
+document.getElementById('addFoodBtn').addEventListener('click', async () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  ensureFood(trip);
+
+  const region = foodRegionInputEl.value.trim();
+  const name = foodNameInputEl.value.trim();
+  const address = foodAddressInputEl.value.trim();
+  const bookingTime = foodBookingTimeInputEl.value;
+  const booked = foodBookedInputEl.value;
+  const note = foodNoteInputEl.value.trim();
+
+  if (!name) {
+    alert('請輸入餐廳名稱');
+    return;
+  }
+
+  trip.food.push({
+    id: uid('food'),
+    region,
+    name,
+    address,
+    bookingTime,
+    booked,
+    note
+  });
+
+  foodRegionInputEl.value = '';
+  foodNameInputEl.value = '';
+  foodAddressInputEl.value = '';
+  foodBookingTimeInputEl.value = '';
+  foodBookedInputEl.value = '未訂位';
+  foodNoteInputEl.value = '';
+  await persistTrips();
+  renderFood();
 });
 
 document.getElementById('openTraffic').addEventListener('click', () => {
@@ -516,6 +806,37 @@ document.getElementById('addTodoBtn').addEventListener('click', async () => {
 
 document.getElementById('backToTripMain').addEventListener('click', () => show('trip-main'));
 document.getElementById('backToDays').addEventListener('click', () => show('schedule-days'));
+document.getElementById('backToDaysFromView').addEventListener('click', () => show('schedule-days'));
+document.getElementById('editDayFromView').addEventListener('click', () => {
+  loadDayEditor();
+  show('day-editor');
+});
+spotEditCancelBtnEl.addEventListener('click', closeSpotEditModal);
+spotEditSaveBtnEl.addEventListener('click', async () => {
+  const day = currentDay();
+  if (!day || !editingSpotId) return;
+  const spot = day.spots.find((s) => s.id === editingSpotId);
+  if (!spot) return;
+
+  const name = spotEditNameEl.value.trim();
+  if (!name) {
+    alert('景點名稱不可空白');
+    return;
+  }
+
+  spot.name = name;
+  spot.time = spotEditTimeEl.value.trim();
+  spot.address = spotEditAddressEl.value.trim();
+  spot.transport = {
+    type: spotEditTransportTypeEl.value,
+    note: spotEditTransportNoteEl.value.trim()
+  };
+  spot.note = spotEditNoteEl.value.trim();
+
+  await persistTrips();
+  closeSpotEditModal();
+  renderDayView();
+});
 
 document.getElementById('confirmSpot').addEventListener('click', () => {
   const day = currentDay();
@@ -526,6 +847,10 @@ document.getElementById('confirmSpot').addEventListener('click', () => {
     name: document.getElementById('spotName').value.trim(),
     time: document.getElementById('spotTime').value,
     address: document.getElementById('spotAddress').value.trim(),
+    transport: {
+      type: document.getElementById('transportType').value,
+      note: document.getElementById('transportNote').value.trim()
+    },
     note: document.getElementById('spotNote').value.trim(),
     confirmed: false
   };
@@ -557,11 +882,22 @@ document.getElementById('saveDay').addEventListener('click', () => {
   day.meals.dinner = document.getElementById('mealDinner').value.trim() || '猶豫中';
   day.transport.type = document.getElementById('transportType').value;
   day.transport.note = document.getElementById('transportNote').value.trim();
+  if (Array.isArray(day.spots)) {
+    day.spots.forEach((spot) => {
+      if (!spot.transport) {
+        spot.transport = {
+          type: day.transport.type,
+          note: day.transport.note
+        };
+      }
+    });
+  }
   day.dailyNote = document.getElementById('dailyNote').value.trim();
   persistTrips();
 
   alert('已儲存當天行程');
-  show('schedule-days');
+  renderDayView();
+  show('day-view');
 });
 
 exportJsonBtn.addEventListener('click', () => {
@@ -587,6 +923,9 @@ importJsonFile.addEventListener('change', async (e) => {
     }
 
     state.trips = parsed.trips;
+    state.trips.forEach((trip) => {
+      trip.theme = normalizeTheme(trip.theme);
+    });
     state.currentTripId = null;
     state.currentDayId = null;
     await persistTrips();
@@ -606,9 +945,13 @@ if ('serviceWorker' in navigator) {
 async function init() {
   try {
     state.trips = await loadTripsFromDb();
+    state.trips.forEach((trip) => {
+      trip.theme = normalizeTheme(trip.theme);
+    });
   } catch {
     state.trips = [];
   }
+  setActiveTheme('mediterranean');
 }
 
 init();
