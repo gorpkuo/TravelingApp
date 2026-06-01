@@ -241,11 +241,29 @@
         <label>早餐<input id="mealBreakfast" placeholder="猶豫中"></label>
         <label>午餐<input id="mealLunch" placeholder="猶豫中"></label>
         <label>晚餐<input id="mealDinner" placeholder="猶豫中"></label>
+        <label>小吃
+          <input id="mealSnackInput" placeholder="例如：可麗露、冰淇淋">
+        </label>
+        <button class="btn btn-light" id="addSnackBtn" type="button">新增小吃</button>
+        <div id="mealSnackList" class="stack"></div>
+        <label>套用美食規劃
+          <select id="mealPresetSelect"></select>
+        </label>
+        <label>帶入到
+          <select id="mealTargetSelect">
+            <option value="breakfast">早餐</option>
+            <option value="lunch">午餐</option>
+            <option value="dinner">晚餐</option>
+            <option value="snack">小吃</option>
+          </select>
+        </label>
+        <button class="btn btn-light" id="applyMealPresetBtn" type="button">套用美食規劃</button>
       </div>
 
       <div class="panel soft-shadow">
         <h3>景 / 行</h3>
         <label>景點名稱<input id="spotName"></label>
+        <button class="btn btn-light" id="openSpotMapBtn" type="button">Google 地圖搜尋</button>
         <label>預計時間<input id="spotTime" type="time"></label>
         <label>地址<input id="spotAddress"></label>
         <label>備註<textarea id="spotNote" rows="2"></textarea></label>
@@ -333,6 +351,37 @@
         <div class="modal-actions">
           <button class="btn btn-3d" id="spotEditSaveBtn" type="button">確定</button>
           <button class="btn btn-light" id="spotEditCancelBtn" type="button">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="foodEditModal" class="modal" aria-hidden="true">
+      <div class="modal-card">
+        <h3>美食修改</h3>
+        <label>地區
+          <input id="foodEditRegion" type="text">
+        </label>
+        <label>餐廳名稱
+          <input id="foodEditName" type="text">
+        </label>
+        <label>地址
+          <input id="foodEditAddress" type="text">
+        </label>
+        <label>訂位日期時間（可空白）
+          <input id="foodEditBookingTime" type="datetime-local">
+        </label>
+        <label>是否已訂位
+          <select id="foodEditBooked">
+            <option>未訂位</option>
+            <option>已訂位</option>
+          </select>
+        </label>
+        <label>備註
+          <textarea id="foodEditNote" rows="3"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button class="btn btn-3d" id="foodEditSaveBtn" type="button">確定</button>
+          <button class="btn btn-light" id="foodEditCancelBtn" type="button">取消</button>
         </div>
       </div>
     </div>

@@ -39,6 +39,16 @@ const spotEditNoteEl = document.getElementById('spotEditNote');
 const spotEditSaveBtnEl = document.getElementById('spotEditSaveBtn');
 const spotEditCancelBtnEl = document.getElementById('spotEditCancelBtn');
 let editingSpotId = null;
+const foodEditModalEl = document.getElementById('foodEditModal');
+const foodEditRegionEl = document.getElementById('foodEditRegion');
+const foodEditNameEl = document.getElementById('foodEditName');
+const foodEditAddressEl = document.getElementById('foodEditAddress');
+const foodEditBookingTimeEl = document.getElementById('foodEditBookingTime');
+const foodEditBookedEl = document.getElementById('foodEditBooked');
+const foodEditNoteEl = document.getElementById('foodEditNote');
+const foodEditSaveBtnEl = document.getElementById('foodEditSaveBtn');
+const foodEditCancelBtnEl = document.getElementById('foodEditCancelBtn');
+let editingFoodId = null;
 
 function normalizeTheme(theme) {
   return ['mediterranean', 'sunset', 'neon'].includes(theme) ? theme : 'mediterranean';
@@ -109,7 +119,7 @@ function buildDays(startDate, endDate) {
       id: uid('day'),
       date: iso,
       title: `Day ${i}`,
-      meals: { breakfast: '猶豫中', lunch: '猶豫中', dinner: '猶豫中' },
+      meals: { breakfast: '猶豫中', lunch: '猶豫中', dinner: '猶豫中', snacks: [] },
       spots: [],
       transport: { type: '開車', note: '' },
       dailyNote: ''
@@ -155,7 +165,9 @@ function isNonEmptyText(v) {
 }
 
 function hasMealsData(day) {
-  return ['breakfast', 'lunch', 'dinner'].some((k) => isNonEmptyText(day.meals?.[k]) && day.meals[k] !== '猶豫中');
+  const base = ['breakfast', 'lunch', 'dinner'].some((k) => isNonEmptyText(day.meals?.[k]) && day.meals[k] !== '猶豫中');
+  const snacks = Array.isArray(day.meals?.snacks) && day.meals.snacks.length > 0;
+  return base || snacks;
 }
 
 function hasDayData(day) {
@@ -174,6 +186,23 @@ function escapeHtml(str) {
     .replaceAll("'", '&#39;');
 }
 
+function extractMapQueryFromMealText(text) {
+  const raw = (text || '').trim();
+  if (!raw || raw === '猶豫中' || raw === '（無）') return '';
+  // remove bracket tags like [未訂位]
+  return raw.replace(/\[[^\]]*\]/g, '').trim();
+}
+
+function mealLineHtml(label, value) {
+  const query = extractMapQueryFromMealText(value);
+  const safeValue = escapeHtml(value || '猶豫中');
+  if (!query) {
+    return `<div><strong>${label}：</strong>${safeValue}</div>`;
+  }
+  const q = encodeURIComponent(query);
+  return `<div><strong>${label}：</strong>${safeValue} <button class="btn btn-light meal-map-btn" data-map-query="${q}" type="button">地圖</button></div>`;
+}
+
 function buildTripPrintHtml(trip) {
   const days = (trip.days || []).filter(hasDayData);
   const dayBlocks = days.map((day) => {
@@ -185,6 +214,9 @@ function buildTripPrintHtml(trip) {
     ].filter(([, v]) => isNonEmptyText(v) && v !== '猶豫中')
       .map(([k, v]) => `<li><strong>${k}：</strong>${escapeHtml(v)}</li>`)
       .join('');
+    const snacksRow = Array.isArray(meals.snacks) && meals.snacks.length
+      ? `<li><strong>小吃：</strong>${meals.snacks.map((s) => escapeHtml(s)).join('、')}</li>`
+      : '';
 
     const spotRows = (day.spots || []).map((s, i) => {
       const transportType = s.transport?.type || '未設定';
@@ -199,7 +231,7 @@ function buildTripPrintHtml(trip) {
     }).join('');
 
     const noteHtml = isNonEmptyText(day.dailyNote) ? `<div><strong>備註：</strong>${escapeHtml(day.dailyNote)}</div>` : '';
-    const mealsHtml = mealRows ? `<ul>${mealRows}</ul>` : '<div>（無餐食資料）</div>';
+    const mealsHtml = (mealRows || snacksRow) ? `<ul>${mealRows}${snacksRow}</ul>` : '<div>（無餐食資料）</div>';
     const spotsHtml = spotRows ? `<ol>${spotRows}</ol>` : '<div>（無景點資料）</div>';
 
     return `<section class="print-day">
@@ -252,6 +284,28 @@ function renderFood() {
     const info = document.createElement('div');
     info.innerHTML = `<strong>${region}｜${name}</strong><br>地址：${address}<br>訂位：<span class="status-badge ${bookedClass}">${booked}</span>｜時間：${bookingTime}<br>${note}`;
 
+    const actionWrap = document.createElement('div');
+    actionWrap.style.display = 'grid';
+    actionWrap.style.gap = '8px';
+
+    const mapBtn = document.createElement('button');
+    mapBtn.className = 'btn btn-light';
+    mapBtn.textContent = '地圖';
+    mapBtn.addEventListener('click', () => {
+      const query = (item.name || '').trim();
+      if (!query) {
+        alert('此筆餐廳名稱為空，無法搜尋地圖');
+        return;
+      }
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+      window.open(url, '_blank', 'noopener');
+    });
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-light';
+    editBtn.textContent = '編輯';
+    editBtn.addEventListener('click', () => openFoodEditModal(item));
+
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'btn btn-light';
     deleteBtn.textContent = '刪除';
@@ -262,8 +316,95 @@ function renderFood() {
     });
 
     row.appendChild(info);
-    row.appendChild(deleteBtn);
+    actionWrap.appendChild(mapBtn);
+    actionWrap.appendChild(editBtn);
+    actionWrap.appendChild(deleteBtn);
+    row.appendChild(actionWrap);
     foodListEl.appendChild(row);
+  });
+}
+
+function openFoodEditModal(item) {
+  editingFoodId = item.id;
+  foodEditRegionEl.value = item.region || '';
+  foodEditNameEl.value = item.name || '';
+  foodEditAddressEl.value = item.address || '';
+  foodEditBookingTimeEl.value = item.bookingTime || '';
+  foodEditBookedEl.value = item.booked || '未訂位';
+  foodEditNoteEl.value = item.note || '';
+  foodEditModalEl.classList.add('show');
+  foodEditModalEl.setAttribute('aria-hidden', 'false');
+}
+
+function closeFoodEditModal() {
+  editingFoodId = null;
+  foodEditModalEl.classList.remove('show');
+  foodEditModalEl.setAttribute('aria-hidden', 'true');
+}
+
+function renderMealPresets() {
+  const trip = currentTrip();
+  const selectEl = document.getElementById('mealPresetSelect');
+  if (!selectEl) return;
+  selectEl.innerHTML = '';
+  if (!trip) return;
+  ensureFood(trip);
+
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = trip.food.length ? '請選擇美食規劃項目' : '目前沒有美食規劃項目';
+  selectEl.appendChild(placeholder);
+
+  trip.food.forEach((item, idx) => {
+    const opt = document.createElement('option');
+    opt.value = String(idx);
+    const region = item.region || '未分類';
+    const name = item.name || '未命名餐廳';
+    const booked = item.booked || '未訂位';
+    opt.textContent = `${region}｜${name} [${booked}]`;
+    selectEl.appendChild(opt);
+  });
+}
+
+function ensureDaySnacks(day) {
+  if (!day.meals) day.meals = {};
+  if (!Array.isArray(day.meals.snacks)) {
+    day.meals.snacks = [];
+  }
+}
+
+function renderSnackList(day) {
+  ensureDaySnacks(day);
+  const listEl = document.getElementById('mealSnackList');
+  if (!listEl) return;
+  listEl.innerHTML = '';
+
+  if (!day.meals.snacks.length) {
+    listEl.innerHTML = '<div class="panel">目前沒有小吃項目</div>';
+    return;
+  }
+
+  day.meals.snacks.forEach((snack, idx) => {
+    const row = document.createElement('div');
+    row.className = 'panel';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr auto';
+    row.style.alignItems = 'center';
+    row.style.gap = '8px';
+
+    const text = document.createElement('span');
+    text.textContent = snack;
+    const del = document.createElement('button');
+    del.className = 'btn btn-light';
+    del.textContent = '刪除';
+    del.addEventListener('click', () => {
+      day.meals.snacks.splice(idx, 1);
+      renderSnackList(day);
+    });
+
+    row.appendChild(text);
+    row.appendChild(del);
+    listEl.appendChild(row);
   });
 }
 
@@ -702,10 +843,21 @@ function renderDayView() {
   if (!day) return;
   document.getElementById('dayViewTitle').textContent = `${day.title} ${formatDate(day.date)}`;
 
+  const snacksText = (Array.isArray(day.meals?.snacks) && day.meals.snacks.length) ? day.meals.snacks.join('、') : '（無）';
   document.getElementById('dayViewMeals').innerHTML =
-    `早餐：${day.meals.breakfast || '猶豫中'}<br>` +
-    `午餐：${day.meals.lunch || '猶豫中'}<br>` +
-    `晚餐：${day.meals.dinner || '猶豫中'}`;
+    mealLineHtml('早餐', day.meals.breakfast || '猶豫中') +
+    mealLineHtml('午餐', day.meals.lunch || '猶豫中') +
+    mealLineHtml('晚餐', day.meals.dinner || '猶豫中') +
+    mealLineHtml('小吃', snacksText);
+
+  document.querySelectorAll('#dayViewMeals .meal-map-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const q = btn.getAttribute('data-map-query') || '';
+      if (!q) return;
+      const url = `https://www.google.com/maps/search/?api=1&query=${q}`;
+      window.open(url, '_blank', 'noopener');
+    });
+  });
 
   renderDayViewSpots(day);
 
@@ -792,10 +944,14 @@ function loadDayEditor() {
   if (!day) return;
   renderTrafficTypeOptions();
   renderSpotTrafficPresets();
+  renderMealPresets();
+  ensureDaySnacks(day);
   document.getElementById('dayEditorTitle').textContent = `${day.title} ${formatDate(day.date)}`;
   document.getElementById('mealBreakfast').value = day.meals.breakfast;
   document.getElementById('mealLunch').value = day.meals.lunch;
   document.getElementById('mealDinner').value = day.meals.dinner;
+  document.getElementById('mealSnackInput').value = '';
+  renderSnackList(day);
   document.getElementById('transportType').value = day.transport.type;
   document.getElementById('transportNote').value = day.transport.note;
   document.getElementById('dailyNote').value = day.dailyNote;
@@ -1016,6 +1172,32 @@ document.getElementById('addFoodBtn').addEventListener('click', async () => {
   foodNoteInputEl.value = '';
   await persistTrips();
   renderFood();
+  renderMealPresets();
+});
+foodEditCancelBtnEl.addEventListener('click', closeFoodEditModal);
+foodEditSaveBtnEl.addEventListener('click', async () => {
+  const trip = currentTrip();
+  if (!trip || !editingFoodId) return;
+  const item = trip.food.find((f) => f.id === editingFoodId);
+  if (!item) return;
+
+  const name = foodEditNameEl.value.trim();
+  if (!name) {
+    alert('請輸入餐廳名稱');
+    return;
+  }
+
+  item.region = foodEditRegionEl.value.trim();
+  item.name = name;
+  item.address = foodEditAddressEl.value.trim();
+  item.bookingTime = foodEditBookingTimeEl.value;
+  item.booked = foodEditBookedEl.value;
+  item.note = foodEditNoteEl.value.trim();
+
+  await persistTrips();
+  closeFoodEditModal();
+  renderFood();
+  renderMealPresets();
 });
 
 document.getElementById('openTraffic').addEventListener('click', () => {
@@ -1079,6 +1261,73 @@ document.getElementById('applySpotTrafficPresetBtn').addEventListener('click', (
   const item = trip.traffic[idx];
   document.getElementById('transportType').value = item.type || '開車';
   document.getElementById('transportNote').value = item.note || '';
+});
+
+document.getElementById('openSpotMapBtn').addEventListener('click', () => {
+  const spotName = document.getElementById('spotName').value.trim();
+  if (!spotName) {
+    alert('請先輸入景點名稱');
+    return;
+  }
+  const spotAddress = document.getElementById('spotAddress').value.trim();
+  const query = spotAddress ? `${spotName} ${spotAddress}` : spotName;
+  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  window.open(url, '_blank', 'noopener');
+});
+
+document.getElementById('applyMealPresetBtn').addEventListener('click', () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  ensureFood(trip);
+  const presetEl = document.getElementById('mealPresetSelect');
+  const targetEl = document.getElementById('mealTargetSelect');
+
+  if (presetEl.value === '') {
+    alert('請先選擇要套用的美食規劃項目');
+    return;
+  }
+
+  const idx = Number(presetEl.value);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= trip.food.length) {
+    alert('選擇的美食規劃項目無效');
+    return;
+  }
+
+  const item = trip.food[idx];
+  const region = item.region ? `${item.region} ` : '';
+  const name = item.name || '未命名餐廳';
+  const booked = item.booked || '未訂位';
+  const text = `${region}${name} [${booked}]`;
+
+  const target = targetEl.value;
+  if (target === 'breakfast') {
+    document.getElementById('mealBreakfast').value = text;
+  } else if (target === 'lunch') {
+    document.getElementById('mealLunch').value = text;
+  } else if (target === 'snack') {
+    const day = currentDay();
+    if (!day) return;
+    ensureDaySnacks(day);
+    day.meals.snacks.push(text);
+    renderSnackList(day);
+  } else {
+    document.getElementById('mealDinner').value = text;
+  }
+});
+
+document.getElementById('addSnackBtn').addEventListener('click', () => {
+  const day = currentDay();
+  if (!day) return;
+  ensureDaySnacks(day);
+  const inputEl = document.getElementById('mealSnackInput');
+  const v = inputEl.value.trim();
+  if (!v) {
+    alert('請輸入小吃內容');
+    return;
+  }
+  day.meals.snacks.push(v);
+  inputEl.value = '';
+  renderSnackList(day);
 });
 
 document.getElementById('backToTripMainFromTodo').addEventListener('click', () => show('trip-main'));
@@ -1181,6 +1430,7 @@ document.getElementById('saveDay').addEventListener('click', () => {
   day.meals.breakfast = document.getElementById('mealBreakfast').value.trim() || '猶豫中';
   day.meals.lunch = document.getElementById('mealLunch').value.trim() || '猶豫中';
   day.meals.dinner = document.getElementById('mealDinner').value.trim() || '猶豫中';
+  ensureDaySnacks(day);
   day.transport.type = document.getElementById('transportType').value;
   day.transport.note = document.getElementById('transportNote').value.trim();
   if (Array.isArray(day.spots)) {
