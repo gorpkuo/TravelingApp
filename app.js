@@ -133,10 +133,85 @@ function currentTrip() {
   return state.trips.find(t => t.id === state.currentTripId);
 }
 
+function nowLabel() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${y}/${m}/${day} ${hh}:${mm}`;
+}
+
+function deepClone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 function currentDay() {
   const trip = currentTrip();
   if (!trip) return null;
   return trip.days.find(d => d.id === state.currentDayId);
+}
+
+function renderSnapshotList() {
+  const listEl = document.getElementById('snapshotList');
+  if (!listEl) return;
+  const trip = currentTrip();
+  listEl.innerHTML = '';
+  if (!trip) return;
+
+  const items = state.snapshots
+    .filter((s) => s.tripId === trip.id)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+
+  if (!items.length) {
+    listEl.innerHTML = '<div class="panel">目前沒有快照</div>';
+    return;
+  }
+
+  items.forEach((s) => {
+    const row = document.createElement('div');
+    row.className = 'panel';
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr auto auto';
+    row.style.gap = '8px';
+    row.style.alignItems = 'center';
+
+    const info = document.createElement('div');
+    info.innerHTML = `<strong>${s.tripName}</strong><br>${s.label}`;
+
+    const restoreBtn = document.createElement('button');
+    restoreBtn.className = 'btn btn-light';
+    restoreBtn.textContent = '還原';
+    restoreBtn.addEventListener('click', async () => {
+      const ok = confirm(`確定還原快照：${s.label}？`);
+      if (!ok) return;
+      const idx = state.trips.findIndex((t) => t.id === s.tripId);
+      if (idx < 0) return;
+      state.trips[idx] = deepClone(s.tripData);
+      await persistTrips();
+      if (state.currentTripId === s.tripId) {
+        setActiveTheme(state.trips[idx].theme);
+        document.getElementById('tripMainTitle').textContent = state.trips[idx].name;
+      }
+      renderSnapshotList();
+      alert('已還原快照');
+    });
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-light';
+    deleteBtn.textContent = '刪除';
+    deleteBtn.addEventListener('click', async () => {
+      state.snapshots = state.snapshots.filter((x) => x.id !== s.id);
+      await deleteSnapshotFromDb(s.id);
+      renderSnapshotList();
+    });
+
+    row.appendChild(info);
+    row.appendChild(restoreBtn);
+    row.appendChild(deleteBtn);
+    listEl.appendChild(row);
+  });
 }
 
 function ensureTodo(trip) {
@@ -688,6 +763,7 @@ function renderTrips() {
       state.currentTripId = trip.id;
       setActiveTheme(trip.theme);
       document.getElementById('tripMainTitle').textContent = trip.name;
+      renderSnapshotList();
       show('trip-main');
     });
 
@@ -996,8 +1072,26 @@ document.getElementById('newTripForm').addEventListener('submit', (e) => {
   state.currentTripId = trip.id;
   setActiveTheme(trip.theme);
   document.getElementById('tripMainTitle').textContent = trip.name;
+  renderSnapshotList();
   e.target.reset();
   show('trip-main');
+});
+
+document.getElementById('createSnapshotBtn').addEventListener('click', async () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  const snapshot = {
+    id: uid('snapshot'),
+    tripId: trip.id,
+    tripName: trip.name,
+    label: `${trip.name}｜${nowLabel()}`,
+    createdAt: new Date().toISOString(),
+    tripData: deepClone(trip)
+  };
+  state.snapshots.push(snapshot);
+  await saveSnapshotToDb(snapshot);
+  renderSnapshotList();
+  alert('已建立快照');
 });
 
 document.getElementById('openSchedule').addEventListener('click', () => {
@@ -1499,10 +1593,13 @@ async function init() {
     state.trips.forEach((trip) => {
       trip.theme = normalizeTheme(trip.theme);
     });
+    state.snapshots = await loadSnapshotsFromDb();
   } catch {
     state.trips = [];
+    state.snapshots = [];
   }
   setActiveTheme('mediterranean');
 }
 
 init();
+
