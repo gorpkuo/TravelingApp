@@ -192,6 +192,20 @@
         </div>
       </header>
       <div class="panel soft-shadow">
+        <button class="btn btn-3d" id="openScheduleAdjust" type="button">微調行程</button>
+      </div>
+      <div id="dayList" class="stack"></div>
+    </section>
+
+    <section id="schedule-adjust-view" class="view page">
+      <header class="page-head">
+        <button class="btn btn-light" id="backToScheduleDays">返回</button>
+        <div>
+          <h2>微調行程</h2>
+          <p>重新安排日期與天數互換。</p>
+        </div>
+      </header>
+      <div class="panel soft-shadow">
         <h3>重新安排日期（天數不變）</h3>
         <label>開始日期
           <input id="rescheduleStartDate" type="date">
@@ -211,7 +225,6 @@
         </label>
         <button class="btn btn-3d" id="applySwapDayBtn" type="button">互換天數</button>
       </div>
-      <div id="dayList" class="stack"></div>
     </section>
 
     <section id="day-editor" class="view page">
@@ -246,6 +259,10 @@
             <option>飛機</option>
           </select>
         </label>
+        <label>套用交通規劃
+          <select id="spotTrafficPresetSelect"></select>
+        </label>
+        <button class="btn btn-light" id="applySpotTrafficPresetBtn" type="button">套用交通規劃</button>
         <label>交通備註<textarea id="transportNote" rows="2"></textarea></label>
         <button class="btn btn-3d" id="confirmSpot" type="button">確認</button>
       </div>

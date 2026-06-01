@@ -492,6 +492,28 @@ function renderTraffic() {
   });
 }
 
+function renderSpotTrafficPresets() {
+  const trip = currentTrip();
+  const selectEl = document.getElementById('spotTrafficPresetSelect');
+  if (!selectEl) return;
+  selectEl.innerHTML = '';
+  if (!trip) return;
+  ensureTraffic(trip);
+
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = trip.traffic.length ? '請選擇交通規劃項目' : '目前沒有交通規劃項目';
+  selectEl.appendChild(placeholder);
+
+  trip.traffic.forEach((item, idx) => {
+    const opt = document.createElement('option');
+    opt.value = String(idx);
+    const time = item.rideTime ? formatRideTime(item.rideTime) : '未設定時間';
+    opt.textContent = `${item.type}｜${time}｜${item.note || '（無備註）'}`;
+    selectEl.appendChild(opt);
+  });
+}
+
 function formatRideTime(raw) {
   if (!raw) return '未設定';
   // New format from datetime-local: 2026-06-24T09:15
@@ -618,10 +640,9 @@ function renderDays() {
     spotHint.className = 'day-row-hint';
     if (Array.isArray(day.spots) && day.spots.length > 0) {
       const first = day.spots[0]?.name || '未命名景點';
-      const rest = day.spots.length - 1;
-      spotHint.textContent = rest > 0 ? `代表地點：${first} +${rest}` : `代表地點：${first}`;
+      spotHint.textContent = first;
     } else {
-      spotHint.textContent = '尚未安排景點';
+      spotHint.textContent = '';
     }
 
     labelWrap.appendChild(label);
@@ -770,6 +791,7 @@ function loadDayEditor() {
   const day = currentDay();
   if (!day) return;
   renderTrafficTypeOptions();
+  renderSpotTrafficPresets();
   document.getElementById('dayEditorTitle').textContent = `${day.title} ${formatDate(day.date)}`;
   document.getElementById('mealBreakfast').value = day.meals.breakfast;
   document.getElementById('mealLunch').value = day.meals.lunch;
@@ -823,6 +845,22 @@ document.getElementById('newTripForm').addEventListener('submit', (e) => {
 });
 
 document.getElementById('openSchedule').addEventListener('click', () => {
+  renderDays();
+  show('schedule-days');
+});
+
+document.getElementById('openScheduleAdjust').addEventListener('click', () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  const rsStart = document.getElementById('rescheduleStartDate');
+  const rsEnd = document.getElementById('rescheduleEndDate');
+  if (rsStart) rsStart.value = trip.startDate || '';
+  if (rsEnd) rsEnd.value = trip.endDate || '';
+  renderSwapDayOptions(trip);
+  show('schedule-adjust-view');
+});
+
+document.getElementById('backToScheduleDays').addEventListener('click', () => {
   renderDays();
   show('schedule-days');
 });
@@ -1020,6 +1058,27 @@ document.getElementById('addTrafficBtn').addEventListener('click', async () => {
   await persistTrips();
   renderTraffic();
   renderTrafficTypeManageList();
+  renderSpotTrafficPresets();
+});
+
+document.getElementById('applySpotTrafficPresetBtn').addEventListener('click', () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  ensureTraffic(trip);
+  const selectEl = document.getElementById('spotTrafficPresetSelect');
+  if (selectEl.value === '') {
+    alert('請先選擇要套用的交通規劃項目');
+    return;
+  }
+  const idx = Number(selectEl.value);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= trip.traffic.length) {
+    alert('選擇的交通規劃項目無效');
+    return;
+  }
+
+  const item = trip.traffic[idx];
+  document.getElementById('transportType').value = item.type || '開車';
+  document.getElementById('transportNote').value = item.note || '';
 });
 
 document.getElementById('backToTripMainFromTodo').addEventListener('click', () => show('trip-main'));
@@ -1105,6 +1164,11 @@ document.getElementById('confirmSpot').addEventListener('click', () => {
     document.getElementById('spotTime').value = '';
     document.getElementById('spotAddress').value = '';
     document.getElementById('spotNote').value = '';
+    const transportTypeEl = document.getElementById('transportType');
+    if (transportTypeEl && transportTypeEl.options.length > 0) {
+      transportTypeEl.selectedIndex = 0;
+    }
+    document.getElementById('transportNote').value = '';
   } else {
     show('day-editor');
   }
