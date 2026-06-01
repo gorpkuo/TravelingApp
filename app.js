@@ -150,6 +150,78 @@ function formatDateTimeLocal(raw) {
   return raw;
 }
 
+function isNonEmptyText(v) {
+  return typeof v === 'string' && v.trim().length > 0;
+}
+
+function hasMealsData(day) {
+  return ['breakfast', 'lunch', 'dinner'].some((k) => isNonEmptyText(day.meals?.[k]) && day.meals[k] !== '猶豫中');
+}
+
+function hasDayData(day) {
+  const hasSpots = Array.isArray(day.spots) && day.spots.length > 0;
+  const hasNote = isNonEmptyText(day.dailyNote);
+  const hasMeals = hasMealsData(day);
+  return hasSpots || hasNote || hasMeals;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('\"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function buildTripPrintHtml(trip) {
+  const days = (trip.days || []).filter(hasDayData);
+  const dayBlocks = days.map((day) => {
+    const meals = day.meals || {};
+    const mealRows = [
+      ['早餐', meals.breakfast],
+      ['午餐', meals.lunch],
+      ['晚餐', meals.dinner]
+    ].filter(([, v]) => isNonEmptyText(v) && v !== '猶豫中')
+      .map(([k, v]) => `<li><strong>${k}：</strong>${escapeHtml(v)}</li>`)
+      .join('');
+
+    const spotRows = (day.spots || []).map((s, i) => {
+      const transportType = s.transport?.type || '未設定';
+      const transportNote = s.transport?.note || '（無備註）';
+      return `<li>
+        <strong>${i + 1}. ${escapeHtml(s.name || '未命名景點')}</strong>
+        <div>時間：${escapeHtml(s.time || '未設定')}</div>
+        <div>地址：${escapeHtml(s.address || '（無地址）')}</div>
+        <div>交通：${escapeHtml(transportType)}｜備註：${escapeHtml(transportNote)}</div>
+        <div>景點備註：${escapeHtml(s.note || '（無備註）')}</div>
+      </li>`;
+    }).join('');
+
+    const noteHtml = isNonEmptyText(day.dailyNote) ? `<div><strong>備註：</strong>${escapeHtml(day.dailyNote)}</div>` : '';
+    const mealsHtml = mealRows ? `<ul>${mealRows}</ul>` : '<div>（無餐食資料）</div>';
+    const spotsHtml = spotRows ? `<ol>${spotRows}</ol>` : '<div>（無景點資料）</div>';
+
+    return `<section class="print-day">
+      <h3>${escapeHtml(day.title)}｜${escapeHtml(formatDate(day.date))}</h3>
+      <h4>食</h4>
+      ${mealsHtml}
+      <h4>景 / 行</h4>
+      ${spotsHtml}
+      ${noteHtml}
+    </section>`;
+  }).join('');
+
+  return `<article class="print-sheet">
+    <header>
+      <h1>${escapeHtml(trip.name)}</h1>
+      <div>${escapeHtml(trip.country)}｜${escapeHtml(trip.region)}</div>
+      <div>${escapeHtml(trip.startDate)} - ${escapeHtml(trip.endDate)}</div>
+    </header>
+    ${dayBlocks || '<div>目前沒有可輸出的已儲存行程內容。</div>'}
+  </article>`;
+}
+
 function renderFood() {
   const trip = currentTrip();
   foodListEl.innerHTML = '';
@@ -297,16 +369,29 @@ function renderTrafficTypeOptions() {
   if (!trip) return;
   normalizeTrafficTypeOptions(trip);
 
-  const selected = trafficTypeInputEl.value;
-  trafficTypeInputEl.innerHTML = '';
-  trip.trafficTypeOptions.forEach((name) => {
-    const opt = document.createElement('option');
-    opt.value = name;
-    opt.textContent = name;
-    trafficTypeInputEl.appendChild(opt);
-  });
-  if (trip.trafficTypeOptions.includes(selected)) {
-    trafficTypeInputEl.value = selected;
+  const syncSelect = (selectEl) => {
+    const selected = selectEl.value;
+    selectEl.innerHTML = '';
+    trip.trafficTypeOptions.forEach((name) => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      opt.textContent = name;
+      selectEl.appendChild(opt);
+    });
+    if (trip.trafficTypeOptions.includes(selected)) {
+      selectEl.value = selected;
+    } else if (trip.trafficTypeOptions.length > 0) {
+      selectEl.value = trip.trafficTypeOptions[0];
+    }
+  };
+
+  syncSelect(trafficTypeInputEl);
+  const dayTransportSelect = document.getElementById('transportType');
+  if (dayTransportSelect) {
+    syncSelect(dayTransportSelect);
+  }
+  if (spotEditTransportTypeEl) {
+    syncSelect(spotEditTransportTypeEl);
   }
 }
 
@@ -508,17 +593,39 @@ function renderDays() {
   const trip = currentTrip();
   dayListEl.innerHTML = '';
   if (!trip) return;
+  const rsStart = document.getElementById('rescheduleStartDate');
+  const rsEnd = document.getElementById('rescheduleEndDate');
+  if (rsStart) rsStart.value = trip.startDate || '';
+  if (rsEnd) rsEnd.value = trip.endDate || '';
+  renderSwapDayOptions(trip);
 
   trip.days.forEach(day => {
     const row = document.createElement('div');
-    row.className = 'panel';
+    row.className = 'panel day-row';
     row.style.display = 'grid';
     row.style.gridTemplateColumns = '1fr auto auto';
     row.style.gap = '8px';
     row.style.alignItems = 'center';
 
+    const labelWrap = document.createElement('div');
+    labelWrap.className = 'day-row-text';
+
     const label = document.createElement('div');
+    label.className = 'day-row-title';
     label.textContent = `${day.title}：${formatDate(day.date)}`;
+
+    const spotHint = document.createElement('div');
+    spotHint.className = 'day-row-hint';
+    if (Array.isArray(day.spots) && day.spots.length > 0) {
+      const first = day.spots[0]?.name || '未命名景點';
+      const rest = day.spots.length - 1;
+      spotHint.textContent = rest > 0 ? `代表地點：${first} +${rest}` : `代表地點：${first}`;
+    } else {
+      spotHint.textContent = '尚未安排景點';
+    }
+
+    labelWrap.appendChild(label);
+    labelWrap.appendChild(spotHint);
 
     const viewBtn = document.createElement('button');
     viewBtn.className = 'btn btn-light';
@@ -538,11 +645,35 @@ function renderDays() {
       show('day-editor');
     });
 
-    row.appendChild(label);
+    row.appendChild(labelWrap);
     row.appendChild(viewBtn);
     row.appendChild(editBtn);
     dayListEl.appendChild(row);
   });
+}
+
+function renderSwapDayOptions(trip) {
+  const fromEl = document.getElementById('swapDayFrom');
+  const toEl = document.getElementById('swapDayTo');
+  if (!fromEl || !toEl) return;
+
+  const fill = (el, selected) => {
+    el.innerHTML = '';
+    trip.days.forEach((day, idx) => {
+      const opt = document.createElement('option');
+      opt.value = String(idx);
+      opt.textContent = `${day.title}｜${formatDate(day.date)}`;
+      el.appendChild(opt);
+    });
+    if (selected != null && selected < trip.days.length) {
+      el.value = String(selected);
+    }
+  };
+
+  const prevFrom = Number(fromEl.value);
+  const prevTo = Number(toEl.value);
+  fill(fromEl, Number.isFinite(prevFrom) ? prevFrom : 0);
+  fill(toEl, Number.isFinite(prevTo) ? prevTo : Math.min(1, trip.days.length - 1));
 }
 
 function renderDayView() {
@@ -618,6 +749,7 @@ function openSpotEditModal(spot) {
   if (!spot.transport) {
     spot.transport = { type: '開車', note: '' };
   }
+  renderTrafficTypeOptions();
   spotEditNameEl.value = spot.name || '';
   spotEditTimeEl.value = spot.time || '';
   spotEditAddressEl.value = spot.address || '';
@@ -637,6 +769,7 @@ function closeSpotEditModal() {
 function loadDayEditor() {
   const day = currentDay();
   if (!day) return;
+  renderTrafficTypeOptions();
   document.getElementById('dayEditorTitle').textContent = `${day.title} ${formatDate(day.date)}`;
   document.getElementById('mealBreakfast').value = day.meals.breakfast;
   document.getElementById('mealLunch').value = day.meals.lunch;
@@ -693,6 +826,110 @@ document.getElementById('openSchedule').addEventListener('click', () => {
   renderDays();
   show('schedule-days');
 });
+
+function parseLocalDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function formatLocalDate(dateObj) {
+  const y = dateObj.getFullYear();
+  const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const d = String(dateObj.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function calcInclusiveDays(startDate, endDate) {
+  const start = parseLocalDate(startDate);
+  const end = parseLocalDate(endDate);
+  const diffMs = end - start;
+  return Math.floor(diffMs / (1000 * 60 * 60 * 24)) + 1;
+}
+
+document.getElementById('applyRescheduleBtn').addEventListener('click', async () => {
+  const trip = currentTrip();
+  if (!trip) return;
+
+  const newStart = document.getElementById('rescheduleStartDate').value;
+  const newEnd = document.getElementById('rescheduleEndDate').value;
+  if (!newStart || !newEnd) {
+    alert('請先輸入開始與結束日期');
+    return;
+  }
+  if (newStart > newEnd) {
+    alert('結束日期不可早於開始日期');
+    return;
+  }
+
+  const oldDays = calcInclusiveDays(trip.startDate, trip.endDate);
+  const newDays = calcInclusiveDays(newStart, newEnd);
+  if (oldDays !== newDays) {
+    alert(`總天數需維持 ${oldDays} 天，目前是 ${newDays} 天`);
+    return;
+  }
+
+  const start = parseLocalDate(newStart);
+  trip.days.forEach((day, idx) => {
+    const d = new Date(start);
+    d.setDate(start.getDate() + idx);
+    day.date = formatLocalDate(d);
+  });
+  trip.startDate = newStart;
+  trip.endDate = newEnd;
+
+  await persistTrips();
+  renderDays();
+  alert('已重新安排日期');
+});
+
+document.getElementById('applySwapDayBtn').addEventListener('click', async () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  const fromIdx = Number(document.getElementById('swapDayFrom').value);
+  const toIdx = Number(document.getElementById('swapDayTo').value);
+
+  if (!Number.isInteger(fromIdx) || !Number.isInteger(toIdx)) {
+    alert('請選擇要互換的 Day');
+    return;
+  }
+  if (fromIdx === toIdx) {
+    alert('來源與目標 Day 不可相同');
+    return;
+  }
+  if (fromIdx < 0 || toIdx < 0 || fromIdx >= trip.days.length || toIdx >= trip.days.length) {
+    alert('Day 選擇超出範圍');
+    return;
+  }
+
+  const fromDay = trip.days[fromIdx];
+  const toDay = trip.days[toIdx];
+  const ok = confirm(`確定互換 ${fromDay.title} 與 ${toDay.title} 的行程內容？`);
+  if (!ok) return;
+
+  const fields = ['meals', 'spots', 'transport', 'dailyNote'];
+  fields.forEach((key) => {
+    const temp = fromDay[key];
+    fromDay[key] = toDay[key];
+    toDay[key] = temp;
+  });
+
+  await persistTrips();
+  renderDays();
+  alert('已完成天數互換');
+});
+
+document.getElementById('exportTripPdfBtn').addEventListener('click', () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  const printContentEl = document.getElementById('printContent');
+  printContentEl.innerHTML = buildTripPrintHtml(trip);
+  show('print-view');
+  setTimeout(() => {
+    window.print();
+  }, 50);
+});
+
+document.getElementById('backFromPrint').addEventListener('click', () => show('trip-main'));
 
 document.getElementById('openTodo').addEventListener('click', () => {
   renderTodo();

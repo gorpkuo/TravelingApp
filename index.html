@@ -77,6 +77,9 @@
         <button class="btn feature trip-main-btn" id="openTodo">待辦</button>
         <button class="btn btn-3d" id="openSchedule">行程</button>
       </div>
+      <div class="panel soft-shadow">
+        <button class="btn btn-3d" id="exportTripPdfBtn" type="button">匯出行程 PDF</button>
+      </div>
     </section>
 
     <section id="food-view" class="view page">
@@ -188,6 +191,26 @@
           <p>先選擇 Day，再進入當天編輯。</p>
         </div>
       </header>
+      <div class="panel soft-shadow">
+        <h3>重新安排日期（天數不變）</h3>
+        <label>開始日期
+          <input id="rescheduleStartDate" type="date">
+        </label>
+        <label>結束日期
+          <input id="rescheduleEndDate" type="date">
+        </label>
+        <button class="btn btn-3d" id="applyRescheduleBtn" type="button">套用新日期</button>
+      </div>
+      <div class="panel soft-shadow">
+        <h3>天數互換（SWAP DAY）</h3>
+        <label>來源 Day
+          <select id="swapDayFrom"></select>
+        </label>
+        <label>目標 Day
+          <select id="swapDayTo"></select>
+        </label>
+        <button class="btn btn-3d" id="applySwapDayBtn" type="button">互換天數</button>
+      </div>
       <div id="dayList" class="stack"></div>
     </section>
 
@@ -296,6 +319,11 @@
         </div>
       </div>
     </div>
+
+    <section id="print-view" class="view page">
+      <div id="printContent"></div>
+      <button class="btn btn-light no-print" id="backFromPrint">返回</button>
+    </section>
   </main>
 
   <script src="db.js"></script>

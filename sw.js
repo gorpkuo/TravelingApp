@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'traveling-app-v10';
+﻿const CACHE_NAME = 'traveling-app-v12';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
@@ -48,6 +48,8 @@ self.addEventListener('fetch', (event) => {
       .catch(() => caches.match(req).then((cached) => cached || caches.match('./index.html')))
   );
 });
+
+
 
 
 
