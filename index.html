@@ -71,13 +71,13 @@
         </div>
       </header>
       <div class="grid-2 feature-grid trip-main-grid">
-        <button class="btn feature trip-main-btn" id="openTraffic">交通</button>
-        <button class="btn feature trip-main-btn" id="openFood">美食</button>
-        <button class="btn feature trip-main-btn" id="openTodo">待辦</button>
-        <button class="btn btn-3d" id="openSchedule">行程</button>
+        <button class="btn feature trip-main-btn google-blue" id="openTraffic">交通</button>
+        <button class="btn feature trip-main-btn google-red" id="openFood">美食</button>
+        <button class="btn feature trip-main-btn google-yellow" id="openTodo">待辦</button>
+        <button class="btn feature trip-main-btn google-green" id="openSchedule">行程</button>
       </div>
       <div class="panel soft-shadow">
-        <button class="btn btn-3d" id="exportTripPdfBtn" type="button">匯出行程 PDF</button>
+        <button class="btn btn-3d google-pdf" id="exportTripPdfBtn" type="button">匯出行程 PDF</button>
       </div>
       <div class="panel soft-shadow">
         <h3>本機快照（版本標記）</h3>
@@ -117,6 +117,13 @@
           <textarea id="foodNoteInput" rows="2" placeholder="例如：4 人、靠窗、19:00"></textarea>
         </label>
         <button class="btn btn-3d" id="addFoodBtn" type="button">新增美食項目</button>
+      </div>
+      <div class="panel utility-row">
+        <label>地區篩選
+          <select id="foodRegionFilter">
+            <option value="">全部地區</option>
+          </select>
+        </label>
       </div>
       <div id="foodList" class="stack"></div>
     </section>

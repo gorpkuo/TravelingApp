@@ -13,6 +13,7 @@ const importJsonFile = document.getElementById('importJsonFile');
 const todoListEl = document.getElementById('todoList');
 const todoInputEl = document.getElementById('todoInput');
 const foodListEl = document.getElementById('foodList');
+const foodRegionFilterEl = document.getElementById('foodRegionFilter');
 const foodRegionInputEl = document.getElementById('foodRegionInput');
 const foodNameInputEl = document.getElementById('foodNameInput');
 const foodAddressInputEl = document.getElementById('foodAddressInput');
@@ -334,13 +335,24 @@ function renderFood() {
   foodListEl.innerHTML = '';
   if (!trip) return;
   ensureFood(trip);
+  renderFoodRegionFilter(trip);
 
   if (!trip.food.length) {
     foodListEl.innerHTML = '<div class="panel">目前沒有美食項目</div>';
     return;
   }
 
-  trip.food.forEach((item) => {
+  const selectedRegion = foodRegionFilterEl.value;
+  const visibleFood = selectedRegion
+    ? trip.food.filter((item) => (item.region || '未分類') === selectedRegion)
+    : trip.food;
+
+  if (!visibleFood.length) {
+    foodListEl.innerHTML = '<div class="panel">這個地區目前沒有美食項目</div>';
+    return;
+  }
+
+  visibleFood.forEach((item) => {
     const row = document.createElement('div');
     row.className = 'panel';
     row.style.display = 'grid';
@@ -367,11 +379,13 @@ function renderFood() {
     mapBtn.className = 'btn btn-light';
     mapBtn.textContent = '地圖';
     mapBtn.addEventListener('click', () => {
-      const query = (item.name || '').trim();
-      if (!query) {
+      const region = (item.region || '').trim();
+      const name = (item.name || '').trim();
+      if (!name) {
         alert('此筆餐廳名稱為空，無法搜尋地圖');
         return;
       }
+      const query = [region, name].filter(Boolean).join(' ');
       const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
       window.open(url, '_blank', 'noopener');
     });
@@ -397,6 +411,30 @@ function renderFood() {
     row.appendChild(actionWrap);
     foodListEl.appendChild(row);
   });
+}
+
+function foodRegions(trip) {
+  return [...new Set(trip.food.map((item) => item.region || '未分類'))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+}
+
+function renderFoodRegionFilter(trip) {
+  const previous = foodRegionFilterEl.value;
+  const regions = foodRegions(trip);
+  foodRegionFilterEl.innerHTML = '';
+
+  const allOption = document.createElement('option');
+  allOption.value = '';
+  allOption.textContent = '全部地區';
+  foodRegionFilterEl.appendChild(allOption);
+
+  regions.forEach((region) => {
+    const option = document.createElement('option');
+    option.value = region;
+    option.textContent = region;
+    foodRegionFilterEl.appendChild(option);
+  });
+
+  foodRegionFilterEl.value = regions.includes(previous) ? previous : '';
 }
 
 function openFoodEditModal(item) {
@@ -1230,6 +1268,8 @@ document.getElementById('openFood').addEventListener('click', () => {
 });
 
 document.getElementById('backToTripMainFromFood').addEventListener('click', () => show('trip-main'));
+
+foodRegionFilterEl.addEventListener('change', renderFood);
 
 document.getElementById('addFoodBtn').addEventListener('click', async () => {
   const trip = currentTrip();
