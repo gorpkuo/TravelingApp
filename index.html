@@ -17,8 +17,8 @@
         <p class="subtitle">手機優先、離線可用、私人行程管理</p>
       </div>
       <div class="stack actions">
-        <button class="btn btn-3d" data-go="new-trip">開啟新旅程</button>
-        <button class="btn btn-ghost" data-go="trips">瀏覽旅程</button>
+        <button class="btn google-blue" data-go="new-trip">開啟新旅程</button>
+        <button class="btn google-green" data-go="trips">瀏覽旅程</button>
       </div>
     </section>
 
@@ -56,8 +56,8 @@
         </div>
       </header>
       <div class="grid-2 utility-row">
-        <button class="btn btn-3d" id="exportJson" type="button">匯出 JSON</button>
-        <button class="btn btn-ghost" id="importJsonBtn" type="button">匯入 JSON</button>
+        <button class="btn google-blue" id="exportJson" type="button">匯出 JSON</button>
+        <button class="btn google-green" id="importJsonBtn" type="button">匯入 JSON</button>
         <input id="importJsonFile" type="file" accept=".json,application/json" hidden>
       </div>
       <div id="tripList" class="stack trip-list"></div>
@@ -116,7 +116,7 @@
         <label>備註
           <textarea id="foodNoteInput" rows="2" placeholder="例如：4 人、靠窗、19:00"></textarea>
         </label>
-        <button class="btn btn-3d" id="addFoodBtn" type="button">新增美食項目</button>
+        <button class="btn google-red" id="addFoodBtn" type="button">新增美食項目</button>
       </div>
       <div class="panel utility-row">
         <label>地區篩選
@@ -150,7 +150,7 @@
         <label>自訂交通工具
           <input id="trafficCustomTypeInput" placeholder="例如：計程車、渡輪、纜車">
         </label>
-        <button class="btn btn-light" id="addTrafficTypeBtn" type="button">加入選單</button>
+        <button class="btn google-blue" id="addTrafficTypeBtn" type="button">加入選單</button>
         <div id="trafficTypeManageList" class="stack"></div>
         <label>備註
           <textarea id="trafficNoteInput" rows="2" placeholder="例如：09:15 從米蘭中央車站出發"></textarea>
@@ -172,7 +172,7 @@
             <option>其他</option>
           </select>
         </label>
-        <button class="btn btn-3d" id="addTrafficBtn" type="button">新增交通項目</button>
+        <button class="btn google-green" id="addTrafficBtn" type="button">新增交通項目</button>
       </div>
       <div id="trafficList" class="stack"></div>
     </section>
@@ -189,7 +189,7 @@
         <label>新增待辦
           <input id="todoInput" placeholder="例如：護照、機票、保險">
         </label>
-        <button class="btn btn-3d" id="addTodoBtn" type="button">新增待辦</button>
+        <button class="btn google-yellow" id="addTodoBtn" type="button">新增待辦</button>
       </div>
       <div id="todoList" class="stack"></div>
     </section>
@@ -203,7 +203,7 @@
         </div>
       </header>
       <div class="panel soft-shadow">
-        <button class="btn btn-3d" id="openScheduleAdjust" type="button">微調行程</button>
+        <button class="btn google-yellow" id="openScheduleAdjust" type="button">微調行程</button>
       </div>
       <div id="dayList" class="stack"></div>
     </section>
@@ -288,6 +288,10 @@
             <option>飛機</option>
           </select>
         </label>
+        <label>交通地址
+          <input id="transportAddress" placeholder="例如：Milano Centrale, Piazza Duca d'Aosta">
+        </label>
+        <button class="btn btn-light" id="openTransportMapBtn" type="button">交通地址地圖</button>
         <label>套用交通規劃
           <select id="spotTrafficPresetSelect"></select>
         </label>
@@ -353,6 +357,10 @@
             <option>飛機</option>
           </select>
         </label>
+        <label>交通地址
+          <input id="spotEditTransportAddress" type="text">
+        </label>
+        <button class="btn btn-light" id="spotEditTransportMapBtn" type="button">交通地址地圖</button>
         <label>交通備註
           <input id="spotEditTransportNote" type="text">
         </label>

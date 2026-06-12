@@ -35,6 +35,8 @@ const spotEditNameEl = document.getElementById('spotEditName');
 const spotEditTimeEl = document.getElementById('spotEditTime');
 const spotEditAddressEl = document.getElementById('spotEditAddress');
 const spotEditTransportTypeEl = document.getElementById('spotEditTransportType');
+const spotEditTransportAddressEl = document.getElementById('spotEditTransportAddress');
+const spotEditTransportMapBtnEl = document.getElementById('spotEditTransportMapBtn');
 const spotEditTransportNoteEl = document.getElementById('spotEditTransportNote');
 const spotEditNoteEl = document.getElementById('spotEditNote');
 const spotEditSaveBtnEl = document.getElementById('spotEditSaveBtn');
@@ -296,11 +298,13 @@ function buildTripPrintHtml(trip) {
 
     const spotRows = (day.spots || []).map((s, i) => {
       const transportType = s.transport?.type || '未設定';
+      const transportAddress = s.transport?.address || '（無交通地址）';
       const transportNote = s.transport?.note || '（無備註）';
       return `<li>
         <strong>${i + 1}. ${escapeHtml(s.name || '未命名景點')}</strong>
         <div>時間：${escapeHtml(s.time || '未設定')}</div>
         <div>地址：${escapeHtml(s.address || '（無地址）')}</div>
+        <div>交通地址：${escapeHtml(transportAddress)}</div>
         <div>交通：${escapeHtml(transportType)}｜備註：${escapeHtml(transportNote)}</div>
         <div>景點備註：${escapeHtml(s.note || '（無備註）')}</div>
       </li>`;
@@ -352,9 +356,9 @@ function renderFood() {
     return;
   }
 
-  visibleFood.forEach((item) => {
+  visibleFood.forEach((item, index) => {
     const row = document.createElement('div');
-    row.className = 'panel';
+    row.className = `panel google-list-card ${googleCardClass(index)}`;
     row.style.display = 'grid';
     row.style.gridTemplateColumns = '1fr auto';
     row.style.gap = '8px';
@@ -532,9 +536,9 @@ function renderTodo() {
     return;
   }
 
-  trip.todo.forEach(item => {
+  trip.todo.forEach((item, index) => {
     const row = document.createElement('div');
-    row.className = 'panel';
+    row.className = `panel google-list-card ${googleCardClass(index)}`;
     row.style.display = 'grid';
     row.style.gridTemplateColumns = '1fr auto auto';
     row.style.alignItems = 'center';
@@ -668,9 +672,9 @@ function renderTrafficTypeManageList() {
     return;
   }
 
-  customOptions.forEach((name) => {
+  customOptions.forEach((name, index) => {
     const row = document.createElement('div');
-    row.className = 'panel';
+    row.className = `panel google-list-card ${googleCardClass(index)}`;
     row.style.display = 'grid';
     row.style.gridTemplateColumns = '1fr auto';
     row.style.gap = '8px';
@@ -714,14 +718,14 @@ function renderTraffic() {
     return;
   }
 
-  trip.traffic.forEach(item => {
+  trip.traffic.forEach((item, index) => {
     const booking = item.booking || '未訂購';
     const rideTime = formatRideTime(item.rideTime);
     const payment = item.payment || '未付款';
     const bookingClass = booking === '已訂購' ? 'badge-booked' : 'badge-unbooked';
 
     const row = document.createElement('div');
-    row.className = 'panel';
+    row.className = `panel google-list-card ${googleCardClass(index)}`;
     row.style.display = 'grid';
     row.style.gridTemplateColumns = '1fr auto';
     row.style.gap = '8px';
@@ -781,6 +785,22 @@ function formatRideTime(raw) {
   return raw;
 }
 
+function openGoogleMapByQuery(query, emptyMessage) {
+  const q = (query || '').trim();
+  if (!q) {
+    alert(emptyMessage);
+    return;
+  }
+  const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+  window.open(url, '_blank', 'noopener');
+}
+
+const GOOGLE_CARD_CLASSES = ['google-card-blue', 'google-card-red', 'google-card-yellow', 'google-card-green'];
+
+function googleCardClass(index) {
+  return GOOGLE_CARD_CLASSES[index % GOOGLE_CARD_CLASSES.length];
+}
+
 function renderTrips() {
   tripListEl.innerHTML = '';
   if (!state.trips.length) {
@@ -788,12 +808,12 @@ function renderTrips() {
     return;
   }
 
-  state.trips.forEach(trip => {
+  state.trips.forEach((trip, index) => {
     const card = document.createElement('div');
-    card.className = `panel trip-card trip-theme-${normalizeTheme(trip.theme)}`;
+    card.className = `panel trip-card trip-theme-${normalizeTheme(trip.theme)} ${googleCardClass(index)}`;
 
     const openBtn = document.createElement('button');
-    openBtn.className = 'btn';
+    openBtn.className = 'btn trip-open-btn';
     openBtn.style.width = '100%';
     openBtn.style.marginBottom = '8px';
     openBtn.innerHTML = `<strong>${trip.name}</strong><br>${trip.country}｜${trip.region}<br>${trip.startDate} - ${trip.endDate}`;
@@ -876,9 +896,9 @@ function renderDays() {
   if (rsEnd) rsEnd.value = trip.endDate || '';
   renderSwapDayOptions(trip);
 
-  trip.days.forEach(day => {
+  trip.days.forEach((day, index) => {
     const row = document.createElement('div');
-    row.className = 'panel day-row';
+    row.className = `panel day-row google-list-card ${googleCardClass(index)}`;
     row.style.display = 'grid';
     row.style.gridTemplateColumns = '1fr auto auto';
     row.style.gap = '8px';
@@ -989,24 +1009,33 @@ function renderDayViewSpots(day) {
 
   day.spots.forEach((spot, i) => {
     if (!spot.transport) {
-      spot.transport = { type: day.transport?.type || '開車', note: day.transport?.note || '' };
+      spot.transport = { type: day.transport?.type || '開車', address: '', note: day.transport?.note || '' };
     }
 
     const row = document.createElement('div');
     row.className = 'panel spot-card';
     row.style.display = 'grid';
-    row.style.gridTemplateColumns = '1fr auto auto';
+    row.style.gridTemplateColumns = '1fr auto auto auto';
     row.style.gap = '8px';
     row.style.alignItems = 'start';
     row.style.marginBottom = '8px';
 
     const info = document.createElement('div');
+    const transportAddress = spot.transport.address || '';
     info.innerHTML =
       `${i + 1}. ${spot.name}（${spot.time || '未設定時間'}）<br>` +
       `${spot.address || '（無地址）'}<br>` +
       `<span class="mini-tag mini-tag-traffic">交通：${spot.transport.type || '未設定'}</span> ` +
+      `<span class="mini-tag mini-tag-traffic">交通地址：${transportAddress || '（無交通地址）'}</span> ` +
       `<span class="mini-tag mini-tag-note">備註：${spot.transport.note || '（無備註）'}</span><br>` +
       `${spot.note || '（無備註）'}`;
+
+    const transportMapBtn = document.createElement('button');
+    transportMapBtn.className = 'btn btn-light';
+    transportMapBtn.textContent = '交通地圖';
+    transportMapBtn.addEventListener('click', () => {
+      openGoogleMapByQuery(transportAddress, '此景點沒有交通地址');
+    });
 
     const editBtn = document.createElement('button');
     editBtn.className = 'btn btn-light';
@@ -1025,6 +1054,7 @@ function renderDayViewSpots(day) {
     });
 
     row.appendChild(info);
+    row.appendChild(transportMapBtn);
     row.appendChild(editBtn);
     row.appendChild(deleteBtn);
     spotsEl.appendChild(row);
@@ -1041,6 +1071,7 @@ function openSpotEditModal(spot) {
   spotEditTimeEl.value = spot.time || '';
   spotEditAddressEl.value = spot.address || '';
   spotEditTransportTypeEl.value = spot.transport.type || '開車';
+  spotEditTransportAddressEl.value = spot.transport.address || '';
   spotEditTransportNoteEl.value = spot.transport.note || '';
   spotEditNoteEl.value = spot.note || '';
   spotEditModalEl.classList.add('show');
@@ -1067,6 +1098,7 @@ function loadDayEditor() {
   document.getElementById('mealSnackInput').value = '';
   renderSnackList(day);
   document.getElementById('transportType').value = day.transport.type;
+  document.getElementById('transportAddress').value = '';
   document.getElementById('transportNote').value = day.transport.note;
   document.getElementById('dailyNote').value = day.dailyNote;
 }
@@ -1409,6 +1441,14 @@ document.getElementById('openSpotMapBtn').addEventListener('click', () => {
   window.open(url, '_blank', 'noopener');
 });
 
+document.getElementById('openTransportMapBtn').addEventListener('click', () => {
+  openGoogleMapByQuery(document.getElementById('transportAddress').value, '請先輸入交通地址');
+});
+
+spotEditTransportMapBtnEl.addEventListener('click', () => {
+  openGoogleMapByQuery(spotEditTransportAddressEl.value, '請先輸入交通地址');
+});
+
 document.getElementById('applyMealPresetBtn').addEventListener('click', () => {
   const trip = currentTrip();
   if (!trip) return;
@@ -1508,6 +1548,7 @@ spotEditSaveBtnEl.addEventListener('click', async () => {
   spot.address = spotEditAddressEl.value.trim();
   spot.transport = {
     type: spotEditTransportTypeEl.value,
+    address: spotEditTransportAddressEl.value.trim(),
     note: spotEditTransportNoteEl.value.trim()
   };
   spot.note = spotEditNoteEl.value.trim();
@@ -1528,6 +1569,7 @@ document.getElementById('confirmSpot').addEventListener('click', () => {
     address: document.getElementById('spotAddress').value.trim(),
     transport: {
       type: document.getElementById('transportType').value,
+      address: document.getElementById('transportAddress').value.trim(),
       note: document.getElementById('transportNote').value.trim()
     },
     note: document.getElementById('spotNote').value.trim(),
@@ -1547,6 +1589,7 @@ document.getElementById('confirmSpot').addEventListener('click', () => {
     document.getElementById('spotTime').value = '';
     document.getElementById('spotAddress').value = '';
     document.getElementById('spotNote').value = '';
+    document.getElementById('transportAddress').value = '';
     const transportTypeEl = document.getElementById('transportType');
     if (transportTypeEl && transportTypeEl.options.length > 0) {
       transportTypeEl.selectedIndex = 0;
