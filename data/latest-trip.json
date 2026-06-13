@@ -1,3 +1,997 @@
 {
-  "trips": []
+  "trips": [
+    {
+      "id": "trip_1780193719969_226c",
+      "name": "北義多洛米蒂 14日",
+      "country": "義大利",
+      "region": "多洛米蒂、米蘭、威尼斯、佛羅倫斯",
+      "startDate": "2026-06-25",
+      "endDate": "2026-07-09",
+      "days": [
+        {
+          "id": "day_1780193719970_0e79",
+          "date": "2026-06-25",
+          "title": "Day 1",
+          "meals": {
+            "breakfast": "在家吃",
+            "lunch": "在家吃",
+            "dinner": "機場吃"
+          },
+          "spots": [
+            {
+              "id": "spot_1780194191519_19f7",
+              "name": "桃園國際機場搭飛機",
+              "time": "21:05",
+              "address": "桃園國際機場 T1",
+              "note": "到香港機場轉機",
+              "confirmed": false,
+              "transport": {
+                "type": "飛機",
+                "note": ""
+              }
+            },
+            {
+              "id": "spot_1780212265561_fab7",
+              "name": "香港國際機場轉機到米蘭",
+              "time": "23:05",
+              "address": "香港國際機場",
+              "transport": {
+                "type": "飛機",
+                "note": "國泰 CX 233"
+              },
+              "note": "起飛時間隔天凌晨 00:50, 轉機時間 1h45min",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "飛機",
+            "note": "國泰 CX 233"
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_249e",
+          "date": "2026-06-26",
+          "title": "Day 2",
+          "meals": {
+            "breakfast": "機場 or 飛機上吃",
+            "lunch": "Mercato Centrale Milano",
+            "dinner": "Limone Sul Garda Il Cortiletto [未訂位]",
+            "snacks": [
+              "Limone Sul Garda GELATERIA QCIARI' - Take Away [未訂位]"
+            ]
+          },
+          "spots": [
+            {
+              "id": "spot_1780214940687_4849",
+              "name": "米蘭 MXP 機場",
+              "time": "08:00",
+              "address": "米蘭 MXP 機場",
+              "transport": {
+                "type": "飛機",
+                "note": "CX 233"
+              },
+              "note": "過海關入境",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780215635424_c7c9",
+              "name": "米蘭MXP 機場",
+              "time": "08:00",
+              "address": "米蘭MXP 機場",
+              "transport": {
+                "type": "飛機",
+                "note": ""
+              },
+              "note": "入境",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780215840055_f7cf",
+              "name": "EuropCar 租車",
+              "time": "12:00",
+              "address": "Europcar Milano Via Galvani",
+              "transport": {
+                "type": "走路",
+                "note": "米蘭中央車站走過去"
+              },
+              "note": "Europcar Milano Via Galvani",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780215999631_63e5",
+              "name": "Torbole Aparthotel",
+              "time": "15:30",
+              "address": "Via Lungolago Conca d'Oro, 49 - 38069, Torbole sul Garda, TN, Italy",
+              "transport": {
+                "type": "開車",
+                "note": "自駕"
+              },
+              "note": "先去飯店 check in",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780216192528_b3b1",
+              "name": "Limone Sul Garda [檸檬小鎮]",
+              "time": "16:30",
+              "address": "Limone Sul Garda",
+              "transport": {
+                "type": "開車",
+                "address": "",
+                "note": ""
+              },
+              "note": "自行車 [隔天早上也可以] / 小鎮巡禮 / 禮品店 / Limonaia del Castèl [檸檬溫室] / Mille Idee 禮品店 / Lamprecht Ida 禮品店",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_6860",
+          "date": "2026-06-27",
+          "title": "Day 3",
+          "meals": {
+            "breakfast": "Torbole Aparthotel 飯店早餐",
+            "lunch": "St. Christina [未決定]",
+            "dinner": "St. Christina [未決定]",
+            "snacks": [
+              "Limone Sul Garda GELATERIA QCIARI' - Take Away [未訂位]"
+            ]
+          },
+          "spots": [
+            {
+              "id": "spot_1780224683461_4340",
+              "name": "Limone Sul Garda",
+              "time": "07:00",
+              "address": "Limone Sul Garda",
+              "transport": {
+                "type": "開車",
+                "address": "Parcheggio moto ; Limone Sul Garda",
+                "note": "附近兩個停車場  Parcheggio moto 露天停車場免費"
+              },
+              "note": "腳踏車 / 小鎮巡禮 / 約九點左右離開前往  St. Christina\n車程約 2.5 h",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1781305664320_828a",
+              "name": "Bike Center Limone",
+              "time": "09:00",
+              "address": "",
+              "transport": {
+                "type": "開車",
+                "address": "Bike Center Limone",
+                "note": ""
+              },
+              "note": "檸檬小鎮單車之旅",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780224809581_a09b",
+              "name": "St. Christina  Panaval Apartments check in",
+              "time": "00:00",
+              "address": "Strada Dursan 95 - 39047, Santa Cristina in Val Gardena, Dolomites, Italy",
+              "transport": {
+                "type": "開車",
+                "note": ""
+              },
+              "note": "逛一下超市. 熟悉一下並補貨\n確認晚餐有沒有可能在超市買到多肉熟食",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780224929805_ee6e",
+              "name": "val di funes 富內斯山谷",
+              "time": "15:00",
+              "address": "val di funes 富內斯山谷",
+              "transport": {
+                "type": "開車",
+                "address": "Parkplatz Bergerplatz",
+                "note": "停車備案 :  Parkplatz Putzen / Parkplatz Filler /"
+              },
+              "note": "聖約翰教堂 / 孤獨教堂 -> St. Magdalena 村莊山谷景 (下午行程光線比較好)",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_d3be",
+          "date": "2026-06-28",
+          "title": "Day 4",
+          "meals": {
+            "breakfast": "早餐自備",
+            "lunch": "Baita Sofie Hütte",
+            "dinner": "St. Christina [未決定]",
+            "snacks": []
+          },
+          "spots": [
+            {
+              "id": "spot_1780227349580_bf67",
+              "name": "Monte Pana",
+              "time": "08:00",
+              "address": "Monte Pana",
+              "transport": {
+                "type": "纜車",
+                "note": "Val gardena cable car"
+              },
+              "note": "St christina 走  #8 + #9 \n#8 到 Monte Pana  =>  Panaraida Wasserspiele 有兒童遊樂區    Art & Nature trail 小步道",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780227958899_49c8",
+              "name": "Seceda",
+              "time": "13:00",
+              "address": "Seceda",
+              "transport": {
+                "type": "纜車",
+                "note": ""
+              },
+              "note": "夏季防人多替代路線  #7 -> #6 -> #5 -> #4  在刀鋒山\n下午到seceda 光線比較好",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "纜車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_50f9",
+          "date": "2026-06-29",
+          "title": "Day 5",
+          "meals": {
+            "breakfast": "自理",
+            "lunch": "Selva [未決定]",
+            "dinner": "St. Christina [未決定]"
+          },
+          "spots": [
+            {
+              "id": "spot_1780228162939_bb68",
+              "name": "Rifugio Friedrich August",
+              "time": "20:00",
+              "address": "Rifugio Friedrich August",
+              "transport": {
+                "type": "開車",
+                "note": ""
+              },
+              "note": "早上去吃甜甜圈, 很早就賣完要早點到",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780228227123_97e5",
+              "name": "Sassolungo",
+              "time": "10:00",
+              "address": "Sassolungo",
+              "transport": {
+                "type": "纜車",
+                "note": "棺材纜車"
+              },
+              "note": "",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780228511731_0dff",
+              "name": "Seggiovia Costabella",
+              "time": "13:30",
+              "address": "Seggiovia Costabella",
+              "transport": {
+                "type": "纜車",
+                "note": ""
+              },
+              "note": "",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "纜車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_dc29",
+          "date": "2026-06-30",
+          "title": "Day 6",
+          "meals": {
+            "breakfast": "自理",
+            "lunch": "St christina [未決定]",
+            "dinner": "Misurina  [未決定]"
+          },
+          "spots": [
+            {
+              "id": "spot_1780228721155_9d60",
+              "name": "Alpe di Siusi",
+              "time": "08:00",
+              "address": "Alpe di Siusi",
+              "transport": {
+                "type": "纜車",
+                "note": "Val gargenda 纜車"
+              },
+              "note": "#1 + #2   [Monte Piz Alpe di Siusi 約 4Km] 整段走完約 1.5h  (6A > 6 >6B) [GPX]",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780228773723_f7f4",
+              "name": "Misurina",
+              "time": "15:00",
+              "address": "Misurina  Chalet Alpenrose",
+              "transport": {
+                "type": "開車",
+                "note": ""
+              },
+              "note": "Check in / 湖邊巡禮",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_f78b",
+          "date": "2026-07-01",
+          "title": "Day 7",
+          "meals": {
+            "breakfast": "自理",
+            "lunch": "5-trroi停車場的餐廳  炸肉排(Schnitzel )",
+            "dinner": "Cortina d'Ampezzo [未確定]",
+            "snacks": []
+          },
+          "spots": [
+            {
+              "id": "spot_1780229202971_50e2",
+              "name": "五塔山 Cinque Torri",
+              "time": "20:00",
+              "address": "Cinque Torri",
+              "transport": {
+                "type": "開車",
+                "note": ""
+              },
+              "note": "五塔山 Cinque Torri   走1+2路線\n [第一次世界大戰戰爭博物館]",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780229302818_b227",
+              "name": "Lago Lagazuoi",
+              "time": "13:30",
+              "address": "Lago Lagazuoi",
+              "transport": {
+                "type": "開車",
+                "note": "5-Torri開車到 Parking Plan dall'Ega 約半小時"
+              },
+              "note": "Scotoni Hütte 小屋附近有草尼馬出沒",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": "5-Torri開車到 Parking Plan dall'Ega 約半小時"
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_8e8d",
+          "date": "2026-07-02",
+          "title": "Day 8",
+          "meals": {
+            "breakfast": "自理",
+            "lunch": "Tre Cime di Lavaredo 山屋",
+            "dinner": "Misurina [未決定]"
+          },
+          "spots": [
+            {
+              "id": "spot_1780229528259_fbf2",
+              "name": "Tre Cime di Lavaredo & Punto Panoramico Dolomiti",
+              "time": "18:00",
+              "address": "",
+              "transport": {
+                "type": "開車",
+                "address": "Parcheggio Auronzo ; Tre Cime di Lavaredo, 32041 Auronzo di Cadore BL, 意大利",
+                "note": ""
+              },
+              "note": "一日走完約 12公里 請睡飽再去",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_796d",
+          "date": "2026-07-03",
+          "title": "Day 9",
+          "meals": {
+            "breakfast": "猶豫中",
+            "lunch": "猶豫中",
+            "dinner": "猶豫中"
+          },
+          "spots": [
+            {
+              "id": "spot_1780229623138_bb33",
+              "name": "Lake Braies",
+              "time": "08:00",
+              "address": "Lake Braies",
+              "transport": {
+                "type": "開車",
+                "note": ""
+              },
+              "note": "[全程4.3公里] 9:00前到不需要預約 P4",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780229682034_57fc",
+              "name": "Misurina  湖區半日遊",
+              "time": "13:30",
+              "address": "",
+              "transport": {
+                "type": "開車",
+                "note": ""
+              },
+              "note": "",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_7a18",
+          "date": "2026-07-04",
+          "title": "Day 10",
+          "meals": {
+            "breakfast": "自理",
+            "lunch": "米蘭車站 [未定]",
+            "dinner": "Le Arcate [晚上七點開 theFork 50% off 未定]",
+            "snacks": [
+              "Bologna Cremeria Santo Stefano [冰] [未訂位]"
+            ]
+          },
+          "spots": [
+            {
+              "id": "spot_1780277779445_1870",
+              "name": "米蘭中央車站",
+              "time": "12:00",
+              "address": "Piazza Duca d'Aosta, 1, 20124 Milano MI, 意大利",
+              "transport": {
+                "type": "開車",
+                "note": ""
+              },
+              "note": "還車",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780279732500_43a1",
+              "name": "Bolona 中央車站",
+              "time": "16:56",
+              "address": "",
+              "transport": {
+                "type": "火車",
+                "note": "米蘭 to 波隆那 italo"
+              },
+              "note": "4 Star Bologna check in",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_f520",
+          "date": "2026-07-05",
+          "title": "Day 11",
+          "meals": {
+            "breakfast": "自理",
+            "lunch": "Firenze Golden View Firenze [已訂位]",
+            "dinner": "Firenze All’Antico Vinaio Firenze [未訂位]",
+            "snacks": [
+              "Firenze Vivoli [未訂位]",
+              "Firenze La Gelatiera [未訂位]"
+            ]
+          },
+          "spots": [
+            {
+              "id": "spot_1780292994761_c2ff",
+              "name": "Firenze",
+              "time": "08:54",
+              "address": "Piazza della Stazione, 50123 Firenze FI, 意大利",
+              "transport": {
+                "type": "火車",
+                "note": "BOLOGNA 08:17 FIRENZE S.M. 08:54\n05 JUL 2026"
+              },
+              "note": "聖母百花殿、領主廣場、野豬噴泉、聖十字聖殿、米開朗基羅廣場、老橋",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_f757",
+          "date": "2026-07-06",
+          "title": "Day 12",
+          "meals": {
+            "breakfast": "猶豫中",
+            "lunch": "猶豫中",
+            "dinner": "猶豫中",
+            "snacks": []
+          },
+          "spots": [
+            {
+              "id": "spot_1780293436926_0ea0",
+              "name": "Venezia",
+              "time": "09:34",
+              "address": "",
+              "transport": {
+                "type": "火車",
+                "note": "TRAVEL from Bologna Centrale To Venezia S. Lucia on 06/07/2026 at 08:01"
+              },
+              "note": "",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_f9eb",
+          "date": "2026-07-07",
+          "title": "Day 13",
+          "meals": {
+            "breakfast": "自理",
+            "lunch": "米蘭 [未定]",
+            "dinner": "米蘭 [未定]",
+            "snacks": []
+          },
+          "spots": [
+            {
+              "id": "spot_1780297348492_10cf",
+              "name": "Milano",
+              "time": "10:10",
+              "address": "",
+              "transport": {
+                "type": "火車",
+                "note": "TRAVEL from Bologna Centrale To Milano Centrale on 07/07/2026 at 08:18 - 10:10"
+              },
+              "note": "",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1780297450316_60c1",
+              "name": "米蘭中心公寓",
+              "time": "10:30",
+              "address": "Via Cristoforo Gluck 15, 中央車站, 20125",
+              "transport": {
+                "type": "走路",
+                "note": ""
+              },
+              "note": "Check in",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_636e",
+          "date": "2026-07-08",
+          "title": "Day 14",
+          "meals": {
+            "breakfast": "自理",
+            "lunch": "MXP 機場",
+            "dinner": "飛機上",
+            "snacks": []
+          },
+          "spots": [
+            {
+              "id": "spot_1780297641488_2013",
+              "name": "Milano MXP",
+              "time": "10:45",
+              "address": "Milano MXP",
+              "transport": {
+                "type": "飛機",
+                "note": ""
+              },
+              "note": "12:45 起飛",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        },
+        {
+          "id": "day_1780193719970_448a",
+          "date": "2026-07-09",
+          "title": "Day 15",
+          "meals": {
+            "breakfast": "飛機上 回台灣",
+            "lunch": "回家吃",
+            "dinner": "回家吃",
+            "snacks": []
+          },
+          "spots": [
+            {
+              "id": "spot_1780297725302_a581",
+              "name": "飛機上",
+              "time": "",
+              "address": "",
+              "transport": {
+                "type": "開車",
+                "note": ""
+              },
+              "note": "",
+              "confirmed": false
+            }
+          ],
+          "transport": {
+            "type": "開車",
+            "note": ""
+          },
+          "dailyNote": ""
+        }
+      ],
+      "todo": [
+        {
+          "id": "todo_1780194516238_356c",
+          "text": "三尖峰停車場車牌輸入",
+          "done": false
+        },
+        {
+          "id": "todo_1780194563558_4064",
+          "text": "國際駕照",
+          "done": false
+        },
+        {
+          "id": "todo_1781228243008_64fa",
+          "text": "機票",
+          "done": true
+        },
+        {
+          "id": "todo_1781228258759_4649",
+          "text": "旅平險 不便險",
+          "done": true
+        },
+        {
+          "id": "todo_1781228291479_e341",
+          "text": "備用藥、福懋熱飲、兒童B群、成人B群",
+          "done": false
+        },
+        {
+          "id": "todo_1781228312551_24df",
+          "text": "購買3日纜車票",
+          "done": false
+        },
+        {
+          "id": "todo_1781228342983_55d9",
+          "text": "火車票",
+          "done": true
+        },
+        {
+          "id": "todo_1781228365705_1541",
+          "text": "SMI卡購買",
+          "done": true
+        },
+        {
+          "id": "todo_1781228376480_c6f0",
+          "text": "租房確認",
+          "done": true
+        },
+        {
+          "id": "todo_1781228388735_c0d2",
+          "text": "機場接送",
+          "done": true
+        },
+        {
+          "id": "todo_1781228400443_a21d",
+          "text": "導航架",
+          "done": true
+        },
+        {
+          "id": "todo_1781228426564_58b3",
+          "text": "三尖峰停車場預約",
+          "done": true
+        },
+        {
+          "id": "todo_1781228444861_6bc7",
+          "text": "手機鍊 墊片",
+          "done": true
+        },
+        {
+          "id": "todo_1781228459543_8e38",
+          "text": "租車",
+          "done": true
+        },
+        {
+          "id": "todo_1781228496949_9c50",
+          "text": "列印文件 住宿、車票、租車",
+          "done": false
+        },
+        {
+          "id": "todo_1781306081840_0b4f",
+          "text": "米蘭教堂 門票 [含電梯]",
+          "done": false
+        }
+      ],
+      "food": [
+        {
+          "id": "food_1780210899138_68e6",
+          "region": "Firenze",
+          "name": "Golden View Firenze",
+          "address": "Via de' Bardi, 58/r, 50125 Firenze FI, 意大利",
+          "bookingTime": "2026-07-05T11:00",
+          "booked": "已訂位",
+          "note": "TheFork 靠窗 4人 (50% off)\n丁骨牛排"
+        },
+        {
+          "id": "food_1780211139234_e144",
+          "region": "Firenze",
+          "name": "Ristorante La Grotta Toscana",
+          "address": "Via dell'Oche, 16R, 50122 Firenze FI, 意大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "T骨牛排 近百花聖母教堂, 中午12:00開始, TheFork 50% off"
+        },
+        {
+          "id": "food_1780279935084_2226",
+          "region": "Bologna",
+          "name": "Cremeria Santo Stefano [冰]",
+          "address": "Via Santo Stefano, 70c, 40125 Bologna BO, 意大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "冰淇淋店 / 鹹開心果必吃"
+        },
+        {
+          "id": "food_1780290255953_ad7e",
+          "region": "Bologna",
+          "name": "La Sberla Bistrot",
+          "address": "Via Altabella, 12e, 40126 Bologna BO, 意大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "theFork 下午7:00開店 50% off"
+        },
+        {
+          "id": "food_1780290347608_bf6d",
+          "region": "Bologna",
+          "name": "Le Arcate",
+          "address": "Via del Borgo di S. Pietro, 59b, 40126 Bologna BO, 意大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": ""
+        },
+        {
+          "id": "food_1780290755970_738e",
+          "region": "Bologna",
+          "name": "La Buttèga",
+          "address": "Via Guglielmo Oberdan, 4, 40126 Bologna BO, 意大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "theFork 下午6:00開店  30% off"
+        },
+        {
+          "id": "food_1780293109338_0b4f",
+          "region": "Firenze",
+          "name": "All’Antico Vinaio Firenze",
+          "address": "Via dei Neri, 65, 50122 Firenze FI, 意大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "三明治"
+        },
+        {
+          "id": "food_1780296605960_7819",
+          "region": "Venezia",
+          "name": "Why&Not | Hostaria Venezia",
+          "address": "Calle S. Felice, 3849, 30121 Venezia VE, 意大利",
+          "bookingTime": "2026-07-06T11:30",
+          "booked": "已訂位",
+          "note": "theFork 9.6 / 07/06 11:30 20% off\n龍蝦麵"
+        },
+        {
+          "id": "food_1780699986913_ccb4",
+          "region": "Firenze",
+          "name": "La Gelatiera",
+          "address": "Via de' Ginori, 21R, 50123 Firenze FI, 意大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "冰店 google 4.8 中央市場 與百花聖母中間"
+        },
+        {
+          "id": "food_1780793978063_be5d",
+          "region": "Firenze",
+          "name": "Vivoli",
+          "address": "Via Isola delle Stinche, 7r, 50122 Firenze FI, 義大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "有兩個入口，傳統口味那邊人比較少\n冰淇淋單吃很甜，"
+        },
+        {
+          "id": "food_1780839381454_e60e",
+          "region": "Milano",
+          "name": "CREMA Alta Gelateria",
+          "address": "Via Fiori Chiari, 16, 20121 Milano MI, 義大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "烘焙過的開心果口味 米蘭有多家分店"
+        },
+        {
+          "id": "food_1780839578375_3872",
+          "region": "Milano",
+          "name": "Pescaria - Milano via Bonnet",
+          "address": "Via Nino Bonnet, 5, 20154 Milano MI, 義大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "章魚腳漢堡"
+        },
+        {
+          "id": "food_1780841158711_a31a",
+          "region": "Milano",
+          "name": "Gelsomina",
+          "address": "Via Carlo Tenca, 5, 20124 Milano MI, 義大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "羅馬生乳包 有原味、開心果口味\n網紅店"
+        },
+        {
+          "id": "food_1780841485841_6f2e",
+          "region": "Milano",
+          "name": "Mercato Centrale Milano",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "米蘭車站裡比較像是美食街 有賣羅馬生乳包"
+        },
+        {
+          "id": "food_1780841962895_6784",
+          "region": "Milano",
+          "name": "Venchi Cioccolato e Gelato, Milano Via Dante",
+          "address": "Via Giuseppe Mengoni, 1, 20121 Milano MI, 義大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "冰"
+        },
+        {
+          "id": "food_1780924786366_f88b",
+          "region": "Milano",
+          "name": "Ciacco",
+          "address": "Via Spadari, 13, 20123 Milano MI, 義大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "紅蝦認證冰淇淋"
+        },
+        {
+          "id": "food_1781307044264_5256",
+          "region": "Limone Sul Garda",
+          "name": "GELATERIA QCIARI' - Take Away",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "檸檬小鎮最好吃的冰淇淋"
+        },
+        {
+          "id": "food_1781310157973_6fef",
+          "region": "Milano",
+          "name": "All’Antico Vinaio",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "米蘭車站好吃的三明治 \nLa Tricolore : 生牛肉、開心果醬、起司\nFavolosa : 薩拉米香腸、辣茄子、起司\nLa Numero 1 : 烤乳豬、奶油洋蔥、馬鈴薯\nLa Boss : 義大利燻活腿、起司、松露奶油、芝麻菜\nInferno <-- 地獄辣\nLA PARADISO : 受歡迎口味, 開心果醬、義式香腸、起司"
+        },
+        {
+          "id": "food_1781313230555_7f24",
+          "region": "Limone Sul Garda",
+          "name": "Focacceria Dal Piasarot",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "在地三明治"
+        },
+        {
+          "id": "food_1781313424995_d095",
+          "region": "Limone Sul Garda",
+          "name": "Il Cortiletto",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "上午11:00以後就有營業"
+        }
+      ],
+      "traffic": [
+        {
+          "id": "traffic_1780195762301_2fbd",
+          "type": "火車",
+          "note": "米蘭 to 波隆那 italo",
+          "booking": "已訂購",
+          "rideTime": "2026-07-04T15:40",
+          "payment": "信用卡"
+        },
+        {
+          "id": "traffic_1780210208586_206d",
+          "type": "纜車",
+          "note": "Val gardena cable car",
+          "booking": "未訂購",
+          "rideTime": "",
+          "payment": "未付款"
+        },
+        {
+          "id": "traffic_1780292297704_bb2a",
+          "type": "火車",
+          "note": "TRAVEL from Bologna Centrale To Milano Centrale on 07/07/2026 at 08:18 - 10:10",
+          "booking": "已訂購",
+          "rideTime": "2026-07-07T08:18",
+          "payment": "信用卡"
+        },
+        {
+          "id": "traffic_1780292458901_8f1c",
+          "type": "火車",
+          "note": "FIRENZE S.M. 17:39 to BOLOGNA 18:18 / 05 JUL 2026",
+          "booking": "已訂購",
+          "rideTime": "2026-07-05T17:39",
+          "payment": "信用卡"
+        },
+        {
+          "id": "traffic_1780292527941_61c2",
+          "type": "火車",
+          "note": "BOLOGNA 08:17 FIRENZE S.M. 08:54\n05 JUL 2026",
+          "booking": "已訂購",
+          "rideTime": "2026-07-05T08:17",
+          "payment": "信用卡"
+        },
+        {
+          "id": "traffic_1780292602361_18ce",
+          "type": "火車",
+          "note": "TRAVEL from Bologna Centrale To Venezia S. Lucia on 06/07/2026 at 08:01",
+          "booking": "已訂購",
+          "rideTime": "2026-07-06T08:01",
+          "payment": "信用卡"
+        },
+        {
+          "id": "traffic_1780292644799_c5a8",
+          "type": "火車",
+          "note": "TRAVEL from Venezia S. Lucia To Bologna Centrale on 06/07/2026 at 17:26",
+          "booking": "已訂購",
+          "rideTime": "2026-07-05T17:43",
+          "payment": "信用卡"
+        }
+      ],
+      "trafficTypeOptions": [
+        "開車",
+        "地鐵",
+        "火車",
+        "巴士",
+        "走路",
+        "飛機",
+        "纜車"
+      ],
+      "theme": "mediterranean"
+    }
+  ]
 }
