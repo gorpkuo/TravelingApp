@@ -1015,7 +1015,7 @@ function renderDayViewSpots(day) {
     const row = document.createElement('div');
     row.className = 'panel spot-card';
     row.style.display = 'grid';
-    row.style.gridTemplateColumns = '1fr auto auto auto';
+    row.style.gridTemplateColumns = '1fr auto';
     row.style.gap = '8px';
     row.style.alignItems = 'start';
     row.style.marginBottom = '8px';
@@ -1029,6 +1029,27 @@ function renderDayViewSpots(day) {
       `<span class="mini-tag mini-tag-traffic">交通地址：${transportAddress || '（無交通地址）'}</span> ` +
       `<span class="mini-tag mini-tag-note">備註：${spot.transport.note || '（無備註）'}</span><br>` +
       `${spot.note || '（無備註）'}`;
+
+    const actionWrap = document.createElement('div');
+    actionWrap.style.display = 'grid';
+    actionWrap.style.gridTemplateColumns = '1fr 1fr';
+    actionWrap.style.gap = '8px';
+
+    const moveUpBtn = document.createElement('button');
+    moveUpBtn.className = 'btn btn-light';
+    moveUpBtn.textContent = '上移';
+    moveUpBtn.disabled = i === 0;
+    moveUpBtn.addEventListener('click', async () => {
+      await moveSpot(day, i, i - 1);
+    });
+
+    const moveDownBtn = document.createElement('button');
+    moveDownBtn.className = 'btn btn-light';
+    moveDownBtn.textContent = '下移';
+    moveDownBtn.disabled = i === day.spots.length - 1;
+    moveDownBtn.addEventListener('click', async () => {
+      await moveSpot(day, i, i + 1);
+    });
 
     const transportMapBtn = document.createElement('button');
     transportMapBtn.className = 'btn btn-light';
@@ -1054,11 +1075,24 @@ function renderDayViewSpots(day) {
     });
 
     row.appendChild(info);
-    row.appendChild(transportMapBtn);
-    row.appendChild(editBtn);
-    row.appendChild(deleteBtn);
+    actionWrap.appendChild(moveUpBtn);
+    actionWrap.appendChild(moveDownBtn);
+    actionWrap.appendChild(transportMapBtn);
+    actionWrap.appendChild(editBtn);
+    actionWrap.appendChild(deleteBtn);
+    row.appendChild(actionWrap);
     spotsEl.appendChild(row);
   });
+}
+
+async function moveSpot(day, fromIndex, toIndex) {
+  if (!Array.isArray(day.spots)) return;
+  if (toIndex < 0 || toIndex >= day.spots.length) return;
+
+  const [spot] = day.spots.splice(fromIndex, 1);
+  day.spots.splice(toIndex, 0, spot);
+  await persistTrips();
+  renderDayView();
 }
 
 function openSpotEditModal(spot) {
@@ -1099,7 +1133,7 @@ function loadDayEditor() {
   renderSnackList(day);
   document.getElementById('transportType').value = day.transport.type;
   document.getElementById('transportAddress').value = '';
-  document.getElementById('transportNote').value = day.transport.note;
+  document.getElementById('transportNote').value = '';
   document.getElementById('dailyNote').value = day.dailyNote;
 }
 
@@ -1583,18 +1617,18 @@ document.getElementById('confirmSpot').addEventListener('click', () => {
 
   day.spots.push(spot);
   persistTrips();
+  document.getElementById('transportNote').value = '';
+  document.getElementById('transportAddress').value = '';
   const next = confirm('是否要繼續編輯下一筆景點？');
   if (next) {
     document.getElementById('spotName').value = '';
     document.getElementById('spotTime').value = '';
     document.getElementById('spotAddress').value = '';
     document.getElementById('spotNote').value = '';
-    document.getElementById('transportAddress').value = '';
     const transportTypeEl = document.getElementById('transportType');
     if (transportTypeEl && transportTypeEl.options.length > 0) {
       transportTypeEl.selectedIndex = 0;
     }
-    document.getElementById('transportNote').value = '';
   } else {
     show('day-editor');
   }
