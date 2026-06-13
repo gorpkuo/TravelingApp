@@ -250,7 +250,8 @@
           "meals": {
             "breakfast": "自理",
             "lunch": "Selva [未決定]",
-            "dinner": "St. Christina [未決定]"
+            "dinner": "St. Christina [未決定]",
+            "snacks": []
           },
           "spots": [
             {
@@ -260,7 +261,8 @@
               "address": "Rifugio Friedrich August",
               "transport": {
                 "type": "開車",
-                "note": ""
+                "address": "Parking Sella ; Selva di Val Gardena",
+                "note": "前3个小时4欧元，之后2欧元，第九个小时起0.5欧元……"
               },
               "note": "早上去吃甜甜圈, 很早就賣完要早點到",
               "confirmed": false
@@ -284,6 +286,7 @@
               "address": "Seggiovia Costabella",
               "transport": {
                 "type": "纜車",
+                "address": "Parkplatz Ciampinoi ; Selva di Val Gardena",
                 "note": ""
               },
               "note": "",

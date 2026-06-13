@@ -141,6 +141,7 @@ function buildDays(startDate, endDate) {
       id: uid('day'),
       date: iso,
       title: `Day ${i}`,
+      summary: '',
       meals: { breakfast: '猶豫中', lunch: '猶豫中', dinner: '猶豫中', snacks: [] },
       spots: [],
       transport: { type: '開車', note: '' },
@@ -270,8 +271,9 @@ function hasMealsData(day) {
 function hasDayData(day) {
   const hasSpots = Array.isArray(day.spots) && day.spots.length > 0;
   const hasNote = isNonEmptyText(day.dailyNote);
+  const hasSummary = isNonEmptyText(day.summary);
   const hasMeals = hasMealsData(day);
-  return hasSpots || hasNote || hasMeals;
+  return hasSpots || hasNote || hasSummary || hasMeals;
 }
 
 function escapeHtml(str) {
@@ -298,6 +300,14 @@ function mealLineHtml(label, value) {
   }
   const q = encodeURIComponent(query);
   return `<div><strong>${label}：</strong>${safeValue} <button class="btn btn-light meal-map-btn" data-map-query="${q}" type="button">地圖</button></div>`;
+}
+
+function daySummaryText(day) {
+  if (isNonEmptyText(day.summary)) return day.summary.trim();
+  if (Array.isArray(day.spots) && day.spots.length > 0) {
+    return day.spots[0]?.name || '未命名景點';
+  }
+  return '';
 }
 
 function buildTripPrintHtml(trip) {
@@ -330,11 +340,13 @@ function buildTripPrintHtml(trip) {
     }).join('');
 
     const noteHtml = isNonEmptyText(day.dailyNote) ? `<div><strong>備註：</strong>${escapeHtml(day.dailyNote)}</div>` : '';
+    const summaryHtml = isNonEmptyText(day.summary) ? `<div><strong>當天標題：</strong>${escapeHtml(day.summary)}</div>` : '';
     const mealsHtml = (mealRows || snacksRow) ? `<ul>${mealRows}${snacksRow}</ul>` : '<div>（無餐食資料）</div>';
     const spotsHtml = spotRows ? `<ol>${spotRows}</ol>` : '<div>（無景點資料）</div>';
 
     return `<section class="print-day">
       <h3>${escapeHtml(day.title)}｜${escapeHtml(formatDate(day.date))}</h3>
+      ${summaryHtml}
       <h4>食</h4>
       ${mealsHtml}
       <h4>景 / 行</h4>
@@ -932,12 +944,7 @@ function renderDays() {
 
     const spotHint = document.createElement('div');
     spotHint.className = 'day-row-hint';
-    if (Array.isArray(day.spots) && day.spots.length > 0) {
-      const first = day.spots[0]?.name || '未命名景點';
-      spotHint.textContent = first;
-    } else {
-      spotHint.textContent = '';
-    }
+    spotHint.textContent = daySummaryText(day);
 
     labelWrap.appendChild(label);
     labelWrap.appendChild(spotHint);
@@ -994,7 +1001,10 @@ function renderSwapDayOptions(trip) {
 function renderDayView() {
   const day = currentDay();
   if (!day) return;
-  document.getElementById('dayViewTitle').textContent = `${day.title} ${formatDate(day.date)}`;
+  const summary = daySummaryText(day);
+  document.getElementById('dayViewTitle').textContent = summary
+    ? `${day.title} ${formatDate(day.date)}｜${summary}`
+    : `${day.title} ${formatDate(day.date)}`;
 
   const snacksText = (Array.isArray(day.meals?.snacks) && day.meals.snacks.length) ? day.meals.snacks.join('、') : '（無）';
   document.getElementById('dayViewMeals').innerHTML =
@@ -1145,6 +1155,7 @@ function loadDayEditor() {
   renderMealPresets();
   ensureDaySnacks(day);
   document.getElementById('dayEditorTitle').textContent = `${day.title} ${formatDate(day.date)}`;
+  document.getElementById('daySummary').value = day.summary || '';
   document.getElementById('mealBreakfast').value = day.meals.breakfast;
   document.getElementById('mealLunch').value = day.meals.lunch;
   document.getElementById('mealDinner').value = day.meals.dinner;
@@ -1657,6 +1668,7 @@ document.getElementById('saveDay').addEventListener('click', () => {
   const day = currentDay();
   if (!day) return;
 
+  day.summary = document.getElementById('daySummary').value.trim();
   day.meals.breakfast = document.getElementById('mealBreakfast').value.trim() || '猶豫中';
   day.meals.lunch = document.getElementById('mealLunch').value.trim() || '猶豫中';
   day.meals.dinner = document.getElementById('mealDinner').value.trim() || '猶豫中';
