@@ -8,7 +8,9 @@ const views = [...document.querySelectorAll('.view')];
 const tripListEl = document.getElementById('tripList');
 const dayListEl = document.getElementById('dayList');
 const exportJsonBtn = document.getElementById('exportJson');
+const exportLatestJsonBtn = document.getElementById('exportLatestJson');
 const importJsonBtn = document.getElementById('importJsonBtn');
+const importLatestFromGithubBtn = document.getElementById('importLatestFromGithub');
 const importJsonFile = document.getElementById('importJsonFile');
 const todoListEl = document.getElementById('todoList');
 const todoInputEl = document.getElementById('todoInput');
@@ -104,6 +106,23 @@ function downloadJson(filename, data) {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+async function importTripsPayload(parsed) {
+  if (!parsed || !Array.isArray(parsed.trips)) {
+    alert('JSON 格式錯誤：缺少 trips 陣列');
+    return false;
+  }
+
+  state.trips = parsed.trips;
+  state.trips.forEach((trip) => {
+    trip.theme = normalizeTheme(trip.theme);
+  });
+  state.currentTripId = null;
+  state.currentDayId = null;
+  await persistTrips();
+  renderTrips();
+  return true;
 }
 
 function buildDays(startDate, endDate) {
@@ -1667,6 +1686,11 @@ exportJsonBtn.addEventListener('click', () => {
   downloadJson(filename, { trips: state.trips });
 });
 
+exportLatestJsonBtn.addEventListener('click', () => {
+  downloadJson('latest-trip.json', { trips: state.trips });
+  alert('已匯出 latest-trip.json。請用它覆蓋 repo 裡的 data/latest-trip.json 後 commit + push。');
+});
+
 importJsonBtn.addEventListener('click', () => {
   importJsonFile.value = '';
   importJsonFile.click();
@@ -1679,22 +1703,26 @@ importJsonFile.addEventListener('change', async (e) => {
   try {
     const text = await file.text();
     const parsed = JSON.parse(text);
-    if (!parsed || !Array.isArray(parsed.trips)) {
-      alert('JSON 格式錯誤：缺少 trips 陣列');
+    const ok = await importTripsPayload(parsed);
+    if (ok) alert('匯入成功');
+  } catch {
+    alert('匯入失敗，請確認 JSON 內容');
+  }
+});
+
+importLatestFromGithubBtn.addEventListener('click', async () => {
+  try {
+    const resp = await fetch(`./data/latest-trip.json?ts=${Date.now()}`, { cache: 'no-store' });
+    if (!resp.ok) {
+      alert('找不到 GitHub latest-trip.json，請先把檔案放到 data/latest-trip.json 並 push。');
       return;
     }
 
-    state.trips = parsed.trips;
-    state.trips.forEach((trip) => {
-      trip.theme = normalizeTheme(trip.theme);
-    });
-    state.currentTripId = null;
-    state.currentDayId = null;
-    await persistTrips();
-    renderTrips();
-    alert('匯入成功');
+    const parsed = await resp.json();
+    const ok = await importTripsPayload(parsed);
+    if (ok) alert('已從 GitHub 匯入 latest-trip.json');
   } catch {
-    alert('匯入失敗，請確認 JSON 內容');
+    alert('從 GitHub 匯入失敗，請確認 data/latest-trip.json 已上傳並可讀取');
   }
 });
 
