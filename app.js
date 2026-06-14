@@ -1588,8 +1588,14 @@ document.getElementById('addTodoBtn').addEventListener('click', async () => {
 });
 
 document.getElementById('backToTripMain').addEventListener('click', () => show('trip-main'));
-document.getElementById('backToDays').addEventListener('click', () => show('schedule-days'));
-document.getElementById('backToDaysFromView').addEventListener('click', () => show('schedule-days'));
+document.getElementById('backToDays').addEventListener('click', () => {
+  renderDays();
+  show('schedule-days');
+});
+document.getElementById('backToDaysFromView').addEventListener('click', () => {
+  renderDays();
+  show('schedule-days');
+});
 document.getElementById('editDayFromView').addEventListener('click', () => {
   loadDayEditor();
   show('day-editor');
