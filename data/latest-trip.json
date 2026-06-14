@@ -346,7 +346,7 @@
           "title": "Day 7",
           "meals": {
             "breakfast": "自理",
-            "lunch": "Rifugio Scoiattoli",
+            "lunch": "5-trroi停車場的餐廳  炸肉排(Schnitzel )",
             "dinner": "Cortina d'Ampezzo [未確定]",
             "snacks": []
           },
@@ -358,8 +358,7 @@
               "address": "Cinque Torri",
               "transport": {
                 "type": "開車",
-                "address": "Baita Bai de Dones",
-                "note": "停車場很大且免費，但因五塔山The Cinque Torri很熱門，若太晚到停車場被停滿就要路邊找停車位"
+                "note": ""
               },
               "note": "五塔山 Cinque Torri   走1+2路線\n [第一次世界大戰戰爭博物館]",
               "confirmed": false
@@ -371,8 +370,7 @@
               "address": "Lago Lagazuoi",
               "transport": {
                 "type": "開車",
-                "address": "PParking Plan dall' Ega ; Badia BZ [定位不準 自己輸入google]",
-                "note": "5-Torri開車到 Parking Plan dall'Ega 約半小時, 停車每次10歐"
+                "note": "5-Torri開車到 Parking Plan dall'Ega 約半小時"
               },
               "note": "Scotoni Hütte 小屋附近有草尼馬出沒",
               "confirmed": false
@@ -380,10 +378,9 @@
           ],
           "transport": {
             "type": "開車",
-            "note": ""
+            "note": "5-Torri開車到 Parking Plan dall'Ega 約半小時"
           },
-          "dailyNote": "",
-          "summary": "五塔山 Cinque Torri"
+          "dailyNote": ""
         },
         {
           "id": "day_1780193719970_8e8d",
@@ -392,8 +389,7 @@
           "meals": {
             "breakfast": "自理",
             "lunch": "Tre Cime di Lavaredo 山屋",
-            "dinner": "Misurina [未決定]",
-            "snacks": []
+            "dinner": "Misurina [未決定]"
           },
           "spots": [
             {
@@ -406,7 +402,7 @@
                 "address": "Parcheggio Auronzo ; Tre Cime di Lavaredo, 32041 Auronzo di Cadore BL, 意大利",
                 "note": ""
               },
-              "note": "一日走完約 12公里 請睡飽再去\n第一段：Rifugio Auronzo → Rifugio Lavaredo [山屋可吃東西]\n第二段：Rifugio Lavaredo → Forcella Lavaredo [這段較辛苦]\n第三段：Forcella Lavaredo → Rifugio Locatelli [吃飯 網每山洞在這裡]\n\n第四段：Rifugio Locatelli → Malga Langalm [有湖泊可拍到影]\n\n第五段：Malga Langalm → Rifugio Auronzo",
+              "note": "一日走完約 12公里 請睡飽再去",
               "confirmed": false
             }
           ],
@@ -414,8 +410,7 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": "",
-          "summary": "Tre Cime di Lavaredo 三尖峰"
+          "dailyNote": ""
         },
         {
           "id": "day_1780193719970_796d",
@@ -423,9 +418,8 @@
           "title": "Day 9",
           "meals": {
             "breakfast": "猶豫中",
-            "lunch": "Emmas Bistro",
-            "dinner": "猶豫中",
-            "snacks": []
+            "lunch": "猶豫中",
+            "dinner": "猶豫中"
           },
           "spots": [
             {
@@ -435,8 +429,7 @@
               "address": "Lake Braies",
               "transport": {
                 "type": "開車",
-                "address": "P2 - Parcheggio Lago di Braies",
-                "note": "P2 or P3 都可以, P2比較便宜一點走路約10分鐘"
+                "note": ""
               },
               "note": "[全程4.3公里] 9:00前到不需要預約 P4",
               "confirmed": false
@@ -458,8 +451,7 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": "",
-          "summary": ""
+          "dailyNote": ""
         },
         {
           "id": "day_1780193719970_7a18",
@@ -526,9 +518,10 @@
               "address": "Piazza della Stazione, 50123 Firenze FI, 意大利",
               "transport": {
                 "type": "火車",
-                "note": "BOLOGNA 08:17 FIRENZE S.M. 08:54\n05 JUL 2026"
+                "address": "Firenze Santa Maria Novella",
+                "note": "BOLOGNA 08:17 FIRENZE S.M. 08:5405 JUL 2026"
               },
-              "note": "聖母百花殿、領主廣場、野豬噴泉、聖十字聖殿、米開朗基羅廣場、老橋",
+              "note": "聖母百花殿、領主廣場、野豬噴泉、聖十字聖殿、米開朗基羅廣場、老橋  [已經把景點載入google my map] 直接開map 導覽即可",
               "confirmed": false
             }
           ],
@@ -544,7 +537,7 @@
           "title": "Day 12",
           "meals": {
             "breakfast": "猶豫中",
-            "lunch": "猶豫中",
+            "lunch": "Venezia Why&Not | Hostaria Venezia [已訂位]",
             "dinner": "猶豫中",
             "snacks": []
           },
@@ -566,7 +559,8 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "summary": ""
         },
         {
           "id": "day_1780193719970_f9eb",
@@ -933,6 +927,15 @@
           "bookingTime": "",
           "booked": "未訂位",
           "note": "上午11:00以後就有營業"
+        },
+        {
+          "id": "food_1781425158069_92c2",
+          "region": "Venezia",
+          "name": "Suso",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "冰淇淋"
         }
       ],
       "traffic": [
