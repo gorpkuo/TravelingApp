@@ -538,8 +538,12 @@
           "meals": {
             "breakfast": "猶豫中",
             "lunch": "Venezia Why&Not | Hostaria Venezia [已訂位]",
-            "dinner": "猶豫中",
-            "snacks": []
+            "dinner": "Venezia Arcicchetti Bakaro [未訂位]",
+            "snacks": [
+              "Venezia Suso [未訂位]",
+              "Venezia Suso [未訂位]",
+              "Venezia Gelateria & Crêpes shop [未訂位]"
+            ]
           },
           "spots": [
             {
@@ -932,6 +936,24 @@
           "id": "food_1781425158069_92c2",
           "region": "Venezia",
           "name": "Suso",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "冰淇淋"
+        },
+        {
+          "id": "food_1781442525849_a48a",
+          "region": "Venezia",
+          "name": "Arcicchetti Bakaro",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "離火車站進, 義式 Tapas"
+        },
+        {
+          "id": "food_1781442667712_c451",
+          "region": "Venezia",
+          "name": "Gelateria & Crêpes shop",
           "address": "",
           "bookingTime": "",
           "booked": "未訂位",
