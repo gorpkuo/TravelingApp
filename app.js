@@ -324,6 +324,11 @@ function stayMapQuery(day) {
   return '';
 }
 
+function staySummaryText(day) {
+  ensureStay(day);
+  return day.stay.hotel || day.stay.location || '';
+}
+
 function hasDayData(day) {
   const hasSpots = Array.isArray(day.spots) && day.spots.length > 0;
   const hasNote = isNonEmptyText(day.dailyNote);
@@ -1047,6 +1052,14 @@ function renderDays() {
 
     labelWrap.appendChild(label);
     labelWrap.appendChild(spotHint);
+
+    const stayHintText = staySummaryText(day);
+    if (stayHintText) {
+      const stayHint = document.createElement('div');
+      stayHint.className = 'day-row-hint';
+      stayHint.textContent = `住宿：${stayHintText}`;
+      labelWrap.appendChild(stayHint);
+    }
 
     const stayMapBtn = document.createElement('button');
     stayMapBtn.className = 'btn btn-light';
