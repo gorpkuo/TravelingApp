@@ -117,6 +117,7 @@ async function importTripsPayload(parsed) {
   state.trips = parsed.trips;
   state.trips.forEach((trip) => {
     trip.theme = normalizeTheme(trip.theme);
+    ensureStayPresets(trip);
   });
   state.currentTripId = null;
   state.currentDayId = null;
@@ -275,9 +276,43 @@ function ensureStay(day) {
   }
 }
 
+function ensureStayPresets(trip) {
+  if (!Array.isArray(trip.stays)) {
+    trip.stays = [];
+  }
+}
+
 function hasStayData(day) {
   ensureStay(day);
   return ['location', 'hotel', 'address', 'url'].some((key) => isNonEmptyText(day.stay[key]));
+}
+
+function stayKey(stay) {
+  return [
+    stay.location || '',
+    stay.hotel || '',
+    stay.address || '',
+    stay.url || ''
+  ].map((v) => v.trim().toLowerCase()).join('|');
+}
+
+function addStayPresetIfNeeded(trip, stay) {
+  ensureStayPresets(trip);
+  if (!['location', 'hotel', 'address', 'url'].some((key) => isNonEmptyText(stay[key]))) {
+    return;
+  }
+
+  const key = stayKey(stay);
+  const exists = trip.stays.some((item) => stayKey(item) === key);
+  if (exists) return;
+
+  trip.stays.push({
+    id: uid('stay'),
+    location: stay.location || '',
+    hotel: stay.hotel || '',
+    address: stay.address || '',
+    url: stay.url || ''
+  });
 }
 
 function hasDayData(day) {
@@ -535,6 +570,29 @@ function renderMealPresets() {
     const name = item.name || '未命名餐廳';
     const booked = item.booked || '未訂位';
     opt.textContent = `${region}｜${name} [${booked}]`;
+    selectEl.appendChild(opt);
+  });
+}
+
+function renderStayPresets() {
+  const trip = currentTrip();
+  const selectEl = document.getElementById('stayPresetSelect');
+  if (!selectEl) return;
+  selectEl.innerHTML = '';
+  if (!trip) return;
+  ensureStayPresets(trip);
+
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = trip.stays.length ? '請選擇住宿資料' : '目前沒有住宿資料';
+  selectEl.appendChild(placeholder);
+
+  trip.stays.forEach((stay, idx) => {
+    const opt = document.createElement('option');
+    opt.value = String(idx);
+    const location = stay.location || '未填地點';
+    const hotel = stay.hotel || '未填飯店';
+    opt.textContent = `${location}｜${hotel}`;
     selectEl.appendChild(opt);
   });
 }
@@ -1220,6 +1278,7 @@ function loadDayEditor() {
   renderTrafficTypeOptions();
   renderSpotTrafficPresets();
   renderMealPresets();
+  renderStayPresets();
   ensureDaySnacks(day);
   ensureStay(day);
   document.getElementById('dayEditorTitle').textContent = `${day.title} ${formatDate(day.date)}`;
@@ -1269,6 +1328,7 @@ document.getElementById('newTripForm').addEventListener('submit', (e) => {
     days: buildDays(startDate, endDate),
     todo: [],
     food: [],
+    stays: [],
     traffic: [],
     trafficTypeOptions: [...DEFAULT_TRAFFIC_TYPES]
   };
@@ -1625,6 +1685,29 @@ document.getElementById('applyMealPresetBtn').addEventListener('click', () => {
   }
 });
 
+document.getElementById('applyStayPresetBtn').addEventListener('click', () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  ensureStayPresets(trip);
+  const selectEl = document.getElementById('stayPresetSelect');
+  if (selectEl.value === '') {
+    alert('請先選擇要套用的住宿資料');
+    return;
+  }
+
+  const idx = Number(selectEl.value);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= trip.stays.length) {
+    alert('選擇的住宿資料無效');
+    return;
+  }
+
+  const stay = trip.stays[idx];
+  document.getElementById('stayLocation').value = stay.location || '';
+  document.getElementById('stayHotel').value = stay.hotel || '';
+  document.getElementById('stayAddress').value = stay.address || '';
+  document.getElementById('stayUrl').value = stay.url || '';
+});
+
 document.getElementById('addSnackBtn').addEventListener('click', () => {
   const day = currentDay();
   if (!day) return;
@@ -1743,8 +1826,9 @@ document.getElementById('confirmSpot').addEventListener('click', () => {
 });
 
 document.getElementById('saveDay').addEventListener('click', () => {
+  const trip = currentTrip();
   const day = currentDay();
-  if (!day) return;
+  if (!trip || !day) return;
 
   day.summary = document.getElementById('daySummary').value.trim();
   day.meals.breakfast = document.getElementById('mealBreakfast').value.trim() || '猶豫中';
@@ -1756,6 +1840,7 @@ document.getElementById('saveDay').addEventListener('click', () => {
     address: document.getElementById('stayAddress').value.trim(),
     url: document.getElementById('stayUrl').value.trim()
   };
+  addStayPresetIfNeeded(trip, day.stay);
   ensureDaySnacks(day);
   day.transport.type = document.getElementById('transportType').value;
   day.transport.note = document.getElementById('transportNote').value.trim();
@@ -1833,6 +1918,7 @@ async function init() {
     state.trips = await loadTripsFromDb();
     state.trips.forEach((trip) => {
       trip.theme = normalizeTheme(trip.theme);
+      ensureStayPresets(trip);
     });
     state.snapshots = await loadSnapshotsFromDb();
   } catch {
