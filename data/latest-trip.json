@@ -47,7 +47,13 @@
             "type": "飛機",
             "note": "國泰 CX 233"
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "",
+            "hotel": "",
+            "address": "",
+            "url": ""
+          }
         },
         {
           "id": "day_1780193719970_249e",
@@ -128,7 +134,14 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Lago di Garda",
+            "hotel": "Torbole Aparthotel",
+            "address": "Via Lungolago Conca d'Oro, 49 - 38069, Torbole sul Garda, TN, Italy",
+            "url": "https://www.hoteltorbole.it/it"
+          },
+          "summary": ""
         },
         {
           "id": "day_1780193719970_6860",
@@ -199,7 +212,14 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Dolomites",
+            "hotel": "Panaval Apartments",
+            "address": "Strada Dursan 95 - 39047, Santa Cristina in Val Gardena, Dolomites, Italy",
+            "url": "https://www.panaval.it"
+          },
+          "summary": "Limone Sul Garda / 富內斯山谷"
         },
         {
           "id": "day_1780193719970_d3be",
@@ -241,7 +261,14 @@
             "type": "纜車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Dolomites",
+            "hotel": "Panaval Apartments",
+            "address": "Strada Dursan 95 - 39047, Santa Cristina in Val Gardena, Dolomites, Italy",
+            "url": "https://www.panaval.it"
+          },
+          "summary": ""
         },
         {
           "id": "day_1780193719970_50f9",
@@ -297,7 +324,14 @@
             "type": "纜車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Dolomites",
+            "hotel": "Panaval Apartments",
+            "address": "Strada Dursan 95 - 39047, Santa Cristina in Val Gardena, Dolomites, Italy",
+            "url": "https://www.panaval.it"
+          },
+          "summary": "Sassolungo"
         },
         {
           "id": "day_1780193719970_dc29",
@@ -306,7 +340,8 @@
           "meals": {
             "breakfast": "自理",
             "lunch": "St christina [未決定]",
-            "dinner": "Misurina  [未決定]"
+            "dinner": "Misurina  [未決定]",
+            "snacks": []
           },
           "spots": [
             {
@@ -338,7 +373,14 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Misurina",
+            "hotel": "Chalet Alpenrose",
+            "address": "via Monte Piana 8 32041 Misurina (BL) CIN IT025005A1IWYWPI86",
+            "url": "https://www.chalet-alpenrose.it/en/"
+          },
+          "summary": "休斯高原 / Misurina"
         },
         {
           "id": "day_1780193719970_f78b",
@@ -378,9 +420,16 @@
           ],
           "transport": {
             "type": "開車",
-            "note": "5-Torri開車到 Parking Plan dall'Ega 約半小時"
+            "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Misurina",
+            "hotel": "Chalet Alpenrose",
+            "address": "via Monte Piana 8 32041 Misurina (BL) CIN IT025005A1IWYWPI86",
+            "url": "https://www.chalet-alpenrose.it/en/"
+          },
+          "summary": ""
         },
         {
           "id": "day_1780193719970_8e8d",
@@ -389,7 +438,8 @@
           "meals": {
             "breakfast": "自理",
             "lunch": "Tre Cime di Lavaredo 山屋",
-            "dinner": "Misurina [未決定]"
+            "dinner": "Misurina [未決定]",
+            "snacks": []
           },
           "spots": [
             {
@@ -410,7 +460,14 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Misurina",
+            "hotel": "Chalet Alpenrose",
+            "address": "via Monte Piana 8 32041 Misurina (BL) CIN IT025005A1IWYWPI86",
+            "url": "https://www.chalet-alpenrose.it/en/"
+          },
+          "summary": ""
         },
         {
           "id": "day_1780193719970_796d",
@@ -419,7 +476,8 @@
           "meals": {
             "breakfast": "猶豫中",
             "lunch": "猶豫中",
-            "dinner": "猶豫中"
+            "dinner": "猶豫中",
+            "snacks": []
           },
           "spots": [
             {
@@ -451,7 +509,14 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Misurina",
+            "hotel": "Chalet Alpenrose",
+            "address": "via Monte Piana 8 32041 Misurina (BL) CIN IT025005A1IWYWPI86",
+            "url": "https://www.chalet-alpenrose.it/en/"
+          },
+          "summary": ""
         },
         {
           "id": "day_1780193719970_7a18",
@@ -495,7 +560,14 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Bologna",
+            "hotel": "4 Star Bologna",
+            "address": "",
+            "url": ""
+          },
+          "summary": "Milano / Bologna"
         },
         {
           "id": "day_1780193719970_f520",
@@ -529,7 +601,14 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Bologna",
+            "hotel": "4 Star Bologna",
+            "address": "",
+            "url": ""
+          },
+          "summary": ""
         },
         {
           "id": "day_1780193719970_f757",
@@ -564,7 +643,13 @@
             "note": ""
           },
           "dailyNote": "",
-          "summary": ""
+          "summary": "",
+          "stay": {
+            "location": "Bologna",
+            "hotel": "4 Star Bologna",
+            "address": "",
+            "url": ""
+          }
         },
         {
           "id": "day_1780193719970_f9eb",
@@ -606,7 +691,14 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "Milano",
+            "hotel": "Via Cristoforo Gluck, 15",
+            "address": "Via Cristoforo Gluck 15, 中央⾞站, 20125 米蘭, 義⼤利",
+            "url": ""
+          },
+          "summary": ""
         },
         {
           "id": "day_1780193719970_636e",
@@ -636,7 +728,13 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "",
+            "hotel": "",
+            "address": "",
+            "url": ""
+          }
         },
         {
           "id": "day_1780193719970_448a",
@@ -666,7 +764,13 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": ""
+          "dailyNote": "",
+          "stay": {
+            "location": "",
+            "hotel": "",
+            "address": "",
+            "url": ""
+          }
         }
       ],
       "todo": [
@@ -1027,7 +1131,37 @@
         "飛機",
         "纜車"
       ],
-      "theme": "mediterranean"
+      "theme": "mediterranean",
+      "stays": [
+        {
+          "id": "stay_1781836024528_8709",
+          "location": "Dolomites",
+          "hotel": "Panaval Apartments",
+          "address": "Strada Dursan 95 - 39047, Santa Cristina in Val Gardena, Dolomites, Italy",
+          "url": "https://www.panaval.it"
+        },
+        {
+          "id": "stay_1781838051310_febf",
+          "location": "Misurina",
+          "hotel": "Chalet Alpenrose",
+          "address": "via Monte Piana 8 32041 Misurina (BL) CIN IT025005A1IWYWPI86",
+          "url": "https://www.chalet-alpenrose.it/en/"
+        },
+        {
+          "id": "stay_1781838392294_0ac6",
+          "location": "Bologna",
+          "hotel": "4 Star Bologna",
+          "address": "",
+          "url": ""
+        },
+        {
+          "id": "stay_1781838890526_5510",
+          "location": "Milano",
+          "hotel": "Via Cristoforo Gluck, 15",
+          "address": "Via Cristoforo Gluck 15, 中央⾞站, 20125 米蘭, 義⼤利",
+          "url": ""
+        }
+      ]
     }
   ]
 }
