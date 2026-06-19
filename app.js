@@ -1161,6 +1161,15 @@ function renderDayViewStay(day) {
     stayEl.appendChild(div);
   });
 
+  const mapBtn = document.createElement('button');
+  mapBtn.className = 'btn btn-light';
+  mapBtn.type = 'button';
+  mapBtn.textContent = '住宿地圖';
+  mapBtn.addEventListener('click', () => {
+    openGoogleMapByQuery(stayMapQuery(day), '這一天沒有住宿地點可搜尋');
+  });
+  stayEl.appendChild(mapBtn);
+
   if (isNonEmptyText(day.stay.url)) {
     const btn = document.createElement('button');
     btn.className = 'btn btn-light';
