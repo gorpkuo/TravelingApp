@@ -593,7 +593,20 @@
                 "address": "Firenze Santa Maria Novella",
                 "note": "BOLOGNA 08:17 FIRENZE S.M. 08:5405 JUL 2026"
               },
-              "note": "聖母百花殿、領主廣場、野豬噴泉、聖十字聖殿、米開朗基羅廣場、老橋  [已經把景點載入google my map] 直接開map 導覽即可",
+              "note": "聖母百花殿、GROM(冰)、領主廣場、烏菲茲美術館、野豬噴泉、老橋、Golden View Firenze",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1781848802940_a7dc",
+              "name": "米開朗琪羅廣場",
+              "time": "",
+              "address": "",
+              "transport": {
+                "type": "開車",
+                "address": "",
+                "note": ""
+              },
+              "note": "恩寵橋（Ponte alle Grazie）、圣十字圣殿、Vivoli (阿福卡朵)、All’Antico Vinaio、La Gelatiera (冰)、新聖母殿、中央市場",
               "confirmed": false
             }
           ],
@@ -632,9 +645,23 @@
               "address": "",
               "transport": {
                 "type": "火車",
+                "address": "",
                 "note": "TRAVEL from Bologna Centrale To Venezia S. Lucia on 06/07/2026 at 08:01"
               },
-              "note": "",
+              "note": "上公車從火車站搭到學院橋站(Accademia)\n聖路加堂 -> 聖馬可廣場 、鐘塔、總督宮、嘆息橋\n[這裡要吃冰去美食區選]、Libreria Acqua Alta\n去資午餐",
+              "confirmed": false
+            },
+            {
+              "id": "spot_1781852101202_1ae9",
+              "name": "威尼斯",
+              "time": "",
+              "address": "",
+              "transport": {
+                "type": "開車",
+                "address": "",
+                "note": ""
+              },
+              "note": "里亞托橋、San Giacomo di Rialto(聖雅各教堂)\nCampo Erberia 河岸(Cicchetti 義大利版的tapas)、\n里亞托市場 Mercato di Rialto、",
               "confirmed": false
             }
           ],
@@ -1062,6 +1089,33 @@
           "bookingTime": "",
           "booked": "未訂位",
           "note": "冰淇淋"
+        },
+        {
+          "id": "food_1781849507475_145c",
+          "region": "Venezia",
+          "name": "Gelateria Gallonetto",
+          "address": "Salizada S. Lio, 5727, 30122 Venezia VE, 意大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "冰 google 4.9"
+        },
+        {
+          "id": "food_1781849638739_34da",
+          "region": "Venezia",
+          "name": "Il Salotto di San Marco - Gelateria Veneziana",
+          "address": "C. Fiubera, 956, 30124 Venezia VE, 意大利",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "冰 google 4.8"
+        },
+        {
+          "id": "food_1781852357338_db3b",
+          "region": "Venezia",
+          "name": "Al Mercà",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "Baccalà mantecato : 第一名 奶油狀鹽鱈魚醬 蒜味\nSpeck e Gorgonzola 煙燻生活腿+藍紋乳酪\nProsciutto e robiola al tartufo AI最推薦 義式生活腿松露味\nSoppressa nostrana 當地味 豬肉臘腸\nMortadella 波隆那式熟肉場"
         }
       ],
       "traffic": [
