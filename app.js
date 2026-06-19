@@ -318,11 +318,9 @@ function addStayPresetIfNeeded(trip, stay) {
 function stayMapQuery(day) {
   ensureStay(day);
   const { location, hotel, address } = day.stay;
-  if (isNonEmptyText(hotel) && isNonEmptyText(address)) return `${hotel} ${address}`;
-  if (isNonEmptyText(location) && isNonEmptyText(hotel)) return `${location} ${hotel}`;
+  const locationHotel = [location, hotel].filter(isNonEmptyText).join(' ');
+  if (locationHotel) return locationHotel;
   if (isNonEmptyText(address)) return address;
-  if (isNonEmptyText(hotel)) return hotel;
-  if (isNonEmptyText(location)) return location;
   return '';
 }
 
