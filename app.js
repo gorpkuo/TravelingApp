@@ -1035,7 +1035,7 @@ function renderDays() {
     const row = document.createElement('div');
     row.className = `panel day-row google-list-card ${googleCardClass(index)}`;
     row.style.display = 'grid';
-    row.style.gridTemplateColumns = '1fr auto auto auto';
+    row.style.gridTemplateColumns = '1fr auto';
     row.style.gap = '8px';
     row.style.alignItems = 'center';
 
@@ -1086,12 +1086,24 @@ function renderDays() {
       show('day-editor');
     });
 
+    const actionWrap = document.createElement('div');
+    actionWrap.style.display = 'grid';
+    actionWrap.style.gap = '8px';
+    actionWrap.style.justifyItems = 'end';
+
+    const secondaryActions = document.createElement('div');
+    secondaryActions.style.display = 'flex';
+    secondaryActions.style.gap = '8px';
+    secondaryActions.style.justifyContent = 'flex-end';
+
     row.appendChild(labelWrap);
     if (hasStayData(day)) {
-      row.appendChild(stayMapBtn);
+      actionWrap.appendChild(stayMapBtn);
     }
-    row.appendChild(viewBtn);
-    row.appendChild(editBtn);
+    secondaryActions.appendChild(viewBtn);
+    secondaryActions.appendChild(editBtn);
+    actionWrap.appendChild(secondaryActions);
+    row.appendChild(actionWrap);
     dayListEl.appendChild(row);
   });
 }
