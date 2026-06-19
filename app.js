@@ -143,6 +143,7 @@ function buildDays(startDate, endDate) {
       title: `Day ${i}`,
       summary: '',
       meals: { breakfast: '猶豫中', lunch: '猶豫中', dinner: '猶豫中', snacks: [] },
+      stay: { location: '', hotel: '', address: '', url: '' },
       spots: [],
       transport: { type: '開車', note: '' },
       dailyNote: ''
@@ -268,12 +269,24 @@ function hasMealsData(day) {
   return base || snacks;
 }
 
+function ensureStay(day) {
+  if (!day.stay || typeof day.stay !== 'object') {
+    day.stay = { location: '', hotel: '', address: '', url: '' };
+  }
+}
+
+function hasStayData(day) {
+  ensureStay(day);
+  return ['location', 'hotel', 'address', 'url'].some((key) => isNonEmptyText(day.stay[key]));
+}
+
 function hasDayData(day) {
   const hasSpots = Array.isArray(day.spots) && day.spots.length > 0;
   const hasNote = isNonEmptyText(day.dailyNote);
   const hasSummary = isNonEmptyText(day.summary);
   const hasMeals = hasMealsData(day);
-  return hasSpots || hasNote || hasSummary || hasMeals;
+  const hasStay = hasStayData(day);
+  return hasSpots || hasNote || hasSummary || hasMeals || hasStay;
 }
 
 function escapeHtml(str) {
@@ -324,6 +337,15 @@ function buildTripPrintHtml(trip) {
     const snacksRow = Array.isArray(meals.snacks) && meals.snacks.length
       ? `<li><strong>小吃：</strong>${meals.snacks.map((s) => escapeHtml(s)).join('、')}</li>`
       : '';
+    ensureStay(day);
+    const stayRows = [
+      ['地點', day.stay.location],
+      ['飯店', day.stay.hotel],
+      ['地址', day.stay.address],
+      ['網址', day.stay.url]
+    ].filter(([, v]) => isNonEmptyText(v))
+      .map(([k, v]) => `<li><strong>${k}：</strong>${escapeHtml(v)}</li>`)
+      .join('');
 
     const spotRows = (day.spots || []).map((s, i) => {
       const transportType = s.transport?.type || '未設定';
@@ -342,6 +364,7 @@ function buildTripPrintHtml(trip) {
     const noteHtml = isNonEmptyText(day.dailyNote) ? `<div><strong>備註：</strong>${escapeHtml(day.dailyNote)}</div>` : '';
     const summaryHtml = isNonEmptyText(day.summary) ? `<div><strong>當天標題：</strong>${escapeHtml(day.summary)}</div>` : '';
     const mealsHtml = (mealRows || snacksRow) ? `<ul>${mealRows}${snacksRow}</ul>` : '<div>（無餐食資料）</div>';
+    const stayHtml = stayRows ? `<ul>${stayRows}</ul>` : '<div>（無住宿資料）</div>';
     const spotsHtml = spotRows ? `<ol>${spotRows}</ol>` : '<div>（無景點資料）</div>';
 
     return `<section class="print-day">
@@ -349,6 +372,8 @@ function buildTripPrintHtml(trip) {
       ${summaryHtml}
       <h4>食</h4>
       ${mealsHtml}
+      <h4>住</h4>
+      ${stayHtml}
       <h4>景 / 行</h4>
       ${spotsHtml}
       ${noteHtml}
@@ -826,6 +851,13 @@ function openGoogleMapByQuery(query, emptyMessage) {
   window.open(url, '_blank', 'noopener');
 }
 
+function externalUrl(raw) {
+  const url = (raw || '').trim();
+  if (!url) return '';
+  if (/^https?:\/\//i.test(url)) return url;
+  return `https://${url}`;
+}
+
 const GOOGLE_CARD_CLASSES = ['google-card-blue', 'google-card-red', 'google-card-yellow', 'google-card-green'];
 
 function googleCardClass(index) {
@@ -1022,9 +1054,44 @@ function renderDayView() {
     });
   });
 
+  renderDayViewStay(day);
   renderDayViewSpots(day);
 
   document.getElementById('dayViewNote').textContent = day.dailyNote || '（無備註）';
+}
+
+function renderDayViewStay(day) {
+  ensureStay(day);
+  const stayEl = document.getElementById('dayViewStay');
+  stayEl.innerHTML = '';
+
+  if (!hasStayData(day)) {
+    stayEl.textContent = '（無住宿資料）';
+    return;
+  }
+
+  const lines = [
+    ['地點', day.stay.location],
+    ['飯店', day.stay.hotel],
+    ['地址', day.stay.address]
+  ].filter(([, value]) => isNonEmptyText(value));
+
+  lines.forEach(([label, value]) => {
+    const div = document.createElement('div');
+    div.innerHTML = `<strong>${label}：</strong>${escapeHtml(value)}`;
+    stayEl.appendChild(div);
+  });
+
+  if (isNonEmptyText(day.stay.url)) {
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-light';
+    btn.type = 'button';
+    btn.textContent = '開啟住宿網址';
+    btn.addEventListener('click', () => {
+      window.open(externalUrl(day.stay.url), '_blank', 'noopener');
+    });
+    stayEl.appendChild(btn);
+  }
 }
 
 function renderDayViewSpots(day) {
@@ -1154,11 +1221,16 @@ function loadDayEditor() {
   renderSpotTrafficPresets();
   renderMealPresets();
   ensureDaySnacks(day);
+  ensureStay(day);
   document.getElementById('dayEditorTitle').textContent = `${day.title} ${formatDate(day.date)}`;
   document.getElementById('daySummary').value = day.summary || '';
   document.getElementById('mealBreakfast').value = day.meals.breakfast;
   document.getElementById('mealLunch').value = day.meals.lunch;
   document.getElementById('mealDinner').value = day.meals.dinner;
+  document.getElementById('stayLocation').value = day.stay.location || '';
+  document.getElementById('stayHotel').value = day.stay.hotel || '';
+  document.getElementById('stayAddress').value = day.stay.address || '';
+  document.getElementById('stayUrl').value = day.stay.url || '';
   document.getElementById('mealSnackInput').value = '';
   renderSnackList(day);
   document.getElementById('transportType').value = day.transport.type;
@@ -1678,6 +1750,12 @@ document.getElementById('saveDay').addEventListener('click', () => {
   day.meals.breakfast = document.getElementById('mealBreakfast').value.trim() || '猶豫中';
   day.meals.lunch = document.getElementById('mealLunch').value.trim() || '猶豫中';
   day.meals.dinner = document.getElementById('mealDinner').value.trim() || '猶豫中';
+  day.stay = {
+    location: document.getElementById('stayLocation').value.trim(),
+    hotel: document.getElementById('stayHotel').value.trim(),
+    address: document.getElementById('stayAddress').value.trim(),
+    url: document.getElementById('stayUrl').value.trim()
+  };
   ensureDaySnacks(day);
   day.transport.type = document.getElementById('transportType').value;
   day.transport.note = document.getElementById('transportNote').value.trim();
