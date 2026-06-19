@@ -1,4 +1,4 @@
-const CACHE_NAME = 'traveling-app-v27';
+const CACHE_NAME = 'traveling-app-v28';
 const PRECACHE_ASSETS = [
   './',
   './index.html',

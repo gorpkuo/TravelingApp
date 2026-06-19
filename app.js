@@ -315,6 +315,17 @@ function addStayPresetIfNeeded(trip, stay) {
   });
 }
 
+function stayMapQuery(day) {
+  ensureStay(day);
+  const { location, hotel, address } = day.stay;
+  if (isNonEmptyText(hotel) && isNonEmptyText(address)) return `${hotel} ${address}`;
+  if (isNonEmptyText(location) && isNonEmptyText(hotel)) return `${location} ${hotel}`;
+  if (isNonEmptyText(address)) return address;
+  if (isNonEmptyText(hotel)) return hotel;
+  if (isNonEmptyText(location)) return location;
+  return '';
+}
+
 function hasDayData(day) {
   const hasSpots = Array.isArray(day.spots) && day.spots.length > 0;
   const hasNote = isNonEmptyText(day.dailyNote);
@@ -1021,7 +1032,7 @@ function renderDays() {
     const row = document.createElement('div');
     row.className = `panel day-row google-list-card ${googleCardClass(index)}`;
     row.style.display = 'grid';
-    row.style.gridTemplateColumns = '1fr auto auto';
+    row.style.gridTemplateColumns = '1fr auto auto auto';
     row.style.gap = '8px';
     row.style.alignItems = 'center';
 
@@ -1038,6 +1049,13 @@ function renderDays() {
 
     labelWrap.appendChild(label);
     labelWrap.appendChild(spotHint);
+
+    const stayMapBtn = document.createElement('button');
+    stayMapBtn.className = 'btn btn-light';
+    stayMapBtn.textContent = '住宿地圖';
+    stayMapBtn.addEventListener('click', () => {
+      openGoogleMapByQuery(stayMapQuery(day), '這一天沒有住宿地點可搜尋');
+    });
 
     const viewBtn = document.createElement('button');
     viewBtn.className = 'btn btn-light';
@@ -1058,6 +1076,9 @@ function renderDays() {
     });
 
     row.appendChild(labelWrap);
+    if (hasStayData(day)) {
+      row.appendChild(stayMapBtn);
+    }
     row.appendChild(viewBtn);
     row.appendChild(editBtn);
     dayListEl.appendChild(row);
