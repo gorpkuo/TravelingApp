@@ -64,7 +64,8 @@
             "lunch": "Mercato Centrale Milano",
             "dinner": "Limone Sul Garda Il Cortiletto [未訂位]",
             "snacks": [
-              "Limone Sul Garda GELATERIA QCIARI' - Take Away [未訂位]"
+              "Limone Sul Garda GELATERIA QCIARI' - Take Away [未訂位]",
+              "Limone sul Garda Delizia al Limone [未訂位]"
             ]
           },
           "spots": [
@@ -123,10 +124,10 @@
               "address": "Limone Sul Garda",
               "transport": {
                 "type": "開車",
-                "address": "",
-                "note": ""
+                "address": "Parcheggio",
+                "note": "第一小時三歐"
               },
-              "note": "自行車 [隔天早上也可以] / 小鎮巡禮 / 禮品店 / Limonaia del Castèl [檸檬溫室] / Mille Idee 禮品店 / Lamprecht Ida 禮品店",
+              "note": "自行車 [隔天早上也可以] / 小鎮巡禮 / 禮品店 / Limonaia del Castèl [檸檬溫室] / Mille Idee 禮品店 / Lamprecht Ida 禮品店\n\n17:00～18:30\n\n老城區散步\n\n湖邊碼頭 Porto Vecchio\n湖濱步道 Lungolago\n老城區石板巷\n紀念品店\n\n這時候光線很漂亮，很適合拍照",
               "confirmed": false
             }
           ],
@@ -166,20 +167,7 @@
                 "address": "Parcheggio moto ; Limone Sul Garda",
                 "note": "附近兩個停車場  Parcheggio moto 露天停車場免費"
               },
-              "note": "腳踏車 / 小鎮巡禮 / 約九點左右離開前往  St. Christina\n車程約 2.5 h",
-              "confirmed": false
-            },
-            {
-              "id": "spot_1781305664320_828a",
-              "name": "Bike Center Limone",
-              "time": "09:00",
-              "address": "",
-              "transport": {
-                "type": "開車",
-                "address": "Bike Center Limone",
-                "note": ""
-              },
-              "note": "檸檬小鎮單車之旅",
+              "note": "07:30早餐 → 09:00租車 → 🚴 Garda懸空步道 → 🍦 Gelateria QCIARÌ → 伴手禮 → 🥪 Focacceria Dal Piasarot 午餐 → 13:00離開前往多洛米蒂",
               "confirmed": false
             },
             {
@@ -524,7 +512,7 @@
           "title": "Day 10",
           "meals": {
             "breakfast": "自理",
-            "lunch": "米蘭車站 [未定]",
+            "lunch": "Milano Roadhouse Restaurant Milano Centrale [未訂位]",
             "dinner": "Le Arcate [晚上七點開 theFork 50% off 未定]",
             "snacks": [
               "Bologna Cremeria Santo Stefano [冰] [未訂位]"
@@ -550,9 +538,10 @@
               "address": "",
               "transport": {
                 "type": "火車",
+                "address": "",
                 "note": "米蘭 to 波隆那 italo"
               },
-              "note": "4 Star Bologna check in",
+              "note": "4 Star Bologna check in\nGelateria Santo Stefano 174 吃冰\nPiazza Santo Stefano > Le Due Torri\nMò Mortadella Lab Via San Vitale 4/f\nPiazza Maggiore",
               "confirmed": false
             }
           ],
@@ -560,7 +549,7 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": "",
+          "dailyNote": "[都市傳說] \n雙塔的「畢業魔咒」 : 學生畢業前爬上阿西內利塔會無法畢業 拍扶住斜塔的照片 - 保佑考試順利 聖斯德望的\n\n「七座教堂」: 猜猜有幾座教堂 \n\nPiazza Maggiore : 主廣場的悄悄話 \n\n海神噴泉的「雕刻家復仇視角」: Biblioteca Salaborsa 薩拉博薩圖書館入口 你要站在圖書館前方、噴泉西側附近的地面上。傳說那裡有一塊較深色或黑色的鋪路石，被稱為： Pietra della Vergogna——羞恥之石",
           "stay": {
             "location": "Bologna",
             "hotel": "4 Star Bologna",
@@ -614,7 +603,7 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": "",
+          "dailyNote": "[都市傳說]\n尋找聖母百花教堂外面的牛頭雕像\n摸野豬鼻子投硬幣",
           "stay": {
             "location": "Bologna",
             "hotel": "4 Star Bologna",
@@ -669,7 +658,7 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": "",
+          "dailyNote": "[都市傳說]\n聖馬可廣場：找「可能來自中國」的飛獅\n聖馬可廣場：不要從兩根柱子中間穿過\nSan Giacomo di Rialto：找只有一根指針的怪鐘\n聖雅各教堂旁：尋找「里亞托駝背人」",
           "summary": "",
           "stay": {
             "location": "Bologna",
@@ -684,9 +673,11 @@
           "title": "Day 13",
           "meals": {
             "breakfast": "自理",
-            "lunch": "米蘭 [未定]",
-            "dinner": "米蘭 [未定]",
-            "snacks": []
+            "lunch": "Milano All’Antico Vinaio [未訂位]",
+            "dinner": "Milano Pescaria - Milano via Bonnet [未訂位]",
+            "snacks": [
+              "Milano Gelsomina [未訂位]"
+            ]
           },
           "spots": [
             {
@@ -718,7 +709,7 @@
             "type": "開車",
             "note": ""
           },
-          "dailyNote": "",
+          "dailyNote": "[都市傳說]\n任務一：米蘭大教堂\n尋找怪獸雕像、金色Madonnina和地板子午線。\n\n任務三：艾曼紐二世拱廊\n找到公牛、完成轉圈祈福，用右腳腳跟踩在公牛特定位置，原地轉三圈。",
           "stay": {
             "location": "Milano",
             "hotel": "Via Cristoforo Gluck, 15",
@@ -953,7 +944,7 @@
           "address": "Calle S. Felice, 3849, 30121 Venezia VE, 意大利",
           "bookingTime": "2026-07-06T11:30",
           "booked": "已訂位",
-          "note": "theFork 9.6 / 07/06 11:30 20% off\n龍蝦麵"
+          "note": "theFork 9.6 / 07/06 11:30 20% off\nTris della tradizione｜威尼斯傳統三品拼盤 ×1\nPasta con astice｜龍蝦義大利麵 ×1\nLinguine con vongole e bottarga｜蛤蜊烏魚子麵 ×1\nFrittura di pesce｜綜合炸海鮮 ×1\n孩子需要較安全口味，再加 Tagliatelle alla bolognese ×1"
         },
         {
           "id": "food_1780699986913_ccb4",
@@ -1097,7 +1088,7 @@
           "address": "Salizada S. Lio, 5727, 30122 Venezia VE, 意大利",
           "bookingTime": "",
           "booked": "未訂位",
-          "note": "冰 google 4.9"
+          "note": "冰 google 4.9\nPistacchio Smeraldo｜翡翠開心果\nCrema Veneziana｜威尼斯蛋奶冰淇淋\nAmarena Incantata｜酸櫻桃冰淇淋\nNocciola delle Langhe｜朗格榛果\nCioccolato Fondente 75%｜75%黑巧克力"
         },
         {
           "id": "food_1781849638739_34da",
@@ -1106,7 +1097,7 @@
           "address": "C. Fiubera, 956, 30124 Venezia VE, 意大利",
           "bookingTime": "",
           "booked": "未訂位",
-          "note": "冰 google 4.8"
+          "note": "冰 google 4.8\nPistacchio｜開心果\nNocciola｜榛果\nMelograno 石榴"
         },
         {
           "id": "food_1781852357338_db3b",
@@ -1116,6 +1107,33 @@
           "bookingTime": "",
           "booked": "未訂位",
           "note": "Baccalà mantecato : 第一名 奶油狀鹽鱈魚醬 蒜味\nSpeck e Gorgonzola 煙燻生活腿+藍紋乳酪\nProsciutto e robiola al tartufo AI最推薦 義式生活腿松露味\nSoppressa nostrana 當地味 豬肉臘腸\nMortadella 波隆那式熟肉場"
+        },
+        {
+          "id": "food_1781916658879_bdbe",
+          "region": "Milano",
+          "name": "Roadhouse Restaurant Milano Centrale",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "Nebraska Rumpsteak：美國內布拉斯加臀肉牛排 medium well\nAsado：偏南美風味的烤牛肉 medium well\nCountry Paillard 午餐套餐 (平日限定)\nCountry Paillard：薄牛肉＋四季豆＋小馬鈴薯\nTagliata di pollo 切片烤雞胸\nRoadhouse - R World 可以看優惠 跟集點"
+        },
+        {
+          "id": "food_1781938198991_448a",
+          "region": "Limone sul Garda",
+          "name": "Delizia al Limone",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "冰淇淋"
+        },
+        {
+          "id": "food_1781938236838_8749",
+          "region": "Limone Sul Garda",
+          "name": "Focacceria Dal Piasarot",
+          "address": "",
+          "bookingTime": "",
+          "booked": "未訂位",
+          "note": "佛卡夏"
         }
       ],
       "traffic": [
@@ -1214,6 +1232,13 @@
           "hotel": "Via Cristoforo Gluck, 15",
           "address": "Via Cristoforo Gluck 15, 中央⾞站, 20125 米蘭, 義⼤利",
           "url": ""
+        },
+        {
+          "id": "stay_1781938593510_d625",
+          "location": "Lago di Garda",
+          "hotel": "Torbole Aparthotel",
+          "address": "Via Lungolago Conca d'Oro, 49 - 38069, Torbole sul Garda, TN, Italy",
+          "url": "https://www.hoteltorbole.it/it"
         }
       ]
     }
