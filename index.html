@@ -75,6 +75,7 @@
       <div class="grid-2 feature-grid trip-main-grid">
         <button class="btn feature trip-main-btn google-blue" id="openTraffic">交通</button>
         <button class="btn feature trip-main-btn google-red" id="openFood">美食</button>
+        <button class="btn feature trip-main-btn google-yellow" id="openAttractions">景點</button>
         <button class="btn feature trip-main-btn google-yellow" id="openTodo">待辦</button>
         <button class="btn feature trip-main-btn google-green" id="openSchedule">行程</button>
       </div>
@@ -128,6 +129,48 @@
         </label>
       </div>
       <div id="foodList" class="stack"></div>
+    </section>
+
+    <section id="attractions-view" class="view page">
+      <header class="page-head">
+        <button class="btn btn-light" id="backToTripMainFromAttractions">返回</button>
+        <div>
+          <h2>景點規劃</h2>
+          <p>先收集景點，再帶入每日行程。</p>
+        </div>
+      </header>
+      <div class="panel soft-shadow">
+        <label>國家
+          <input id="attractionCountryInput" placeholder="例如：義大利">
+        </label>
+        <label>地區
+          <input id="attractionRegionInput" placeholder="例如：佛羅倫斯、威尼斯">
+        </label>
+        <label>景點名稱
+          <input id="attractionNameInput" placeholder="例如：烏菲茲美術館">
+        </label>
+        <label>地址
+          <input id="attractionAddressInput" placeholder="例如：Piazzale degli Uffizi, Firenze">
+        </label>
+        <label>預估停留時間
+          <input id="attractionDurationInput" placeholder="例如：2 小時">
+        </label>
+        <label>門票/預約資訊
+          <input id="attractionTicketInput" placeholder="例如：已預約 10:30、現場購票">
+        </label>
+        <label>備註
+          <textarea id="attractionNoteInput" rows="2" placeholder="例如：入口在側門、適合早上去"></textarea>
+        </label>
+        <button class="btn google-yellow" id="addAttractionBtn" type="button">新增景點</button>
+      </div>
+      <div class="panel utility-row">
+        <label>地區篩選
+          <select id="attractionRegionFilter">
+            <option value="">全部地區</option>
+          </select>
+        </label>
+      </div>
+      <div id="attractionList" class="stack"></div>
     </section>
 
     <section id="traffic-view" class="view page">
@@ -304,6 +347,10 @@
         <h3>景 / 行</h3>
         <label>景點名稱<input id="spotName"></label>
         <button class="btn btn-light" id="openSpotMapBtn" type="button">Google 地圖搜尋</button>
+        <label>套用景點規劃
+          <select id="spotAttractionPresetSelect"></select>
+        </label>
+        <button class="btn btn-light" id="applySpotAttractionPresetBtn" type="button">套用景點規劃</button>
         <label>預計時間<input id="spotTime" type="time"></label>
         <label>地址<input id="spotAddress"></label>
         <label>備註<textarea id="spotNote" rows="2"></textarea></label>
@@ -404,6 +451,37 @@
         <div class="modal-actions">
           <button class="btn btn-3d" id="spotEditSaveBtn" type="button">確定</button>
           <button class="btn btn-light" id="spotEditCancelBtn" type="button">取消</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="attractionEditModal" class="modal" aria-hidden="true">
+      <div class="modal-card">
+        <h3>景點修改</h3>
+        <label>國家
+          <input id="attractionEditCountry" type="text">
+        </label>
+        <label>地區
+          <input id="attractionEditRegion" type="text">
+        </label>
+        <label>景點名稱
+          <input id="attractionEditName" type="text">
+        </label>
+        <label>地址
+          <input id="attractionEditAddress" type="text">
+        </label>
+        <label>預估停留時間
+          <input id="attractionEditDuration" type="text">
+        </label>
+        <label>門票/預約資訊
+          <input id="attractionEditTicket" type="text">
+        </label>
+        <label>備註
+          <textarea id="attractionEditNote" rows="3"></textarea>
+        </label>
+        <div class="modal-actions">
+          <button class="btn btn-3d" id="attractionEditSaveBtn" type="button">確定</button>
+          <button class="btn btn-light" id="attractionEditCancelBtn" type="button">取消</button>
         </div>
       </div>
     </div>

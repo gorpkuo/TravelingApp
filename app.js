@@ -22,6 +22,15 @@ const foodAddressInputEl = document.getElementById('foodAddressInput');
 const foodBookingTimeInputEl = document.getElementById('foodBookingTimeInput');
 const foodBookedInputEl = document.getElementById('foodBookedInput');
 const foodNoteInputEl = document.getElementById('foodNoteInput');
+const attractionListEl = document.getElementById('attractionList');
+const attractionRegionFilterEl = document.getElementById('attractionRegionFilter');
+const attractionCountryInputEl = document.getElementById('attractionCountryInput');
+const attractionRegionInputEl = document.getElementById('attractionRegionInput');
+const attractionNameInputEl = document.getElementById('attractionNameInput');
+const attractionAddressInputEl = document.getElementById('attractionAddressInput');
+const attractionDurationInputEl = document.getElementById('attractionDurationInput');
+const attractionTicketInputEl = document.getElementById('attractionTicketInput');
+const attractionNoteInputEl = document.getElementById('attractionNoteInput');
 const trafficListEl = document.getElementById('trafficList');
 const trafficTypeInputEl = document.getElementById('trafficTypeInput');
 const trafficCustomTypeInputEl = document.getElementById('trafficCustomTypeInput');
@@ -54,6 +63,17 @@ const foodEditNoteEl = document.getElementById('foodEditNote');
 const foodEditSaveBtnEl = document.getElementById('foodEditSaveBtn');
 const foodEditCancelBtnEl = document.getElementById('foodEditCancelBtn');
 let editingFoodId = null;
+const attractionEditModalEl = document.getElementById('attractionEditModal');
+const attractionEditCountryEl = document.getElementById('attractionEditCountry');
+const attractionEditRegionEl = document.getElementById('attractionEditRegion');
+const attractionEditNameEl = document.getElementById('attractionEditName');
+const attractionEditAddressEl = document.getElementById('attractionEditAddress');
+const attractionEditDurationEl = document.getElementById('attractionEditDuration');
+const attractionEditTicketEl = document.getElementById('attractionEditTicket');
+const attractionEditNoteEl = document.getElementById('attractionEditNote');
+const attractionEditSaveBtnEl = document.getElementById('attractionEditSaveBtn');
+const attractionEditCancelBtnEl = document.getElementById('attractionEditCancelBtn');
+let editingAttractionId = null;
 
 function normalizeTheme(theme) {
   return ['mediterranean', 'sunset', 'neon'].includes(theme) ? theme : 'mediterranean';
@@ -118,6 +138,7 @@ async function importTripsPayload(parsed) {
   state.trips.forEach((trip) => {
     trip.theme = normalizeTheme(trip.theme);
     ensureStayPresets(trip);
+    ensureAttractions(trip);
   });
   state.currentTripId = null;
   state.currentDayId = null;
@@ -214,6 +235,8 @@ function renderSnapshotList() {
       const idx = state.trips.findIndex((t) => t.id === s.tripId);
       if (idx < 0) return;
       state.trips[idx] = deepClone(s.tripData);
+      ensureStayPresets(state.trips[idx]);
+      ensureAttractions(state.trips[idx]);
       await persistTrips();
       if (state.currentTripId === s.tripId) {
         setActiveTheme(state.trips[idx].theme);
@@ -248,6 +271,12 @@ function ensureTodo(trip) {
 function ensureFood(trip) {
   if (!Array.isArray(trip.food)) {
     trip.food = [];
+  }
+}
+
+function ensureAttractions(trip) {
+  if (!Array.isArray(trip.attractions)) {
+    trip.attractions = [];
   }
 }
 
@@ -564,6 +593,132 @@ function closeFoodEditModal() {
   foodEditModalEl.setAttribute('aria-hidden', 'true');
 }
 
+function attractionMapQuery(item) {
+  return [item.country, item.region, item.name, item.address]
+    .filter(isNonEmptyText)
+    .join(' ');
+}
+
+function attractionRegions(trip) {
+  ensureAttractions(trip);
+  return [...new Set(trip.attractions.map((item) => item.region || '未分類'))].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
+}
+
+function renderAttractionRegionFilter(trip) {
+  const previous = attractionRegionFilterEl.value;
+  const regions = attractionRegions(trip);
+  attractionRegionFilterEl.innerHTML = '';
+
+  const allOption = document.createElement('option');
+  allOption.value = '';
+  allOption.textContent = '全部地區';
+  attractionRegionFilterEl.appendChild(allOption);
+
+  regions.forEach((region) => {
+    const option = document.createElement('option');
+    option.value = region;
+    option.textContent = region;
+    attractionRegionFilterEl.appendChild(option);
+  });
+
+  attractionRegionFilterEl.value = regions.includes(previous) ? previous : '';
+}
+
+function renderAttractions() {
+  const trip = currentTrip();
+  attractionListEl.innerHTML = '';
+  if (!trip) return;
+  ensureAttractions(trip);
+  renderAttractionRegionFilter(trip);
+
+  if (!trip.attractions.length) {
+    attractionListEl.innerHTML = '<div class="panel">目前沒有景點項目</div>';
+    return;
+  }
+
+  const selectedRegion = attractionRegionFilterEl.value;
+  const visibleAttractions = selectedRegion
+    ? trip.attractions.filter((item) => (item.region || '未分類') === selectedRegion)
+    : trip.attractions;
+
+  if (!visibleAttractions.length) {
+    attractionListEl.innerHTML = '<div class="panel">這個地區目前沒有景點項目</div>';
+    return;
+  }
+
+  visibleAttractions.forEach((item, index) => {
+    const row = document.createElement('div');
+    row.className = `panel google-list-card ${googleCardClass(index)}`;
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '1fr auto';
+    row.style.gap = '8px';
+    row.style.alignItems = 'center';
+
+    const country = item.country || '未填國家';
+    const region = item.region || '未分類';
+    const name = item.name || '未命名景點';
+    const address = item.address || '（無地址）';
+    const duration = item.duration || '未設定';
+    const ticket = item.ticket || '未設定';
+    const note = item.note || '（無備註）';
+
+    const info = document.createElement('div');
+    info.innerHTML = `<strong>${country}｜${region}｜${name}</strong><br>地址：${address}<br>停留：${duration}｜門票/預約：${ticket}<br>${note}`;
+
+    const actionWrap = document.createElement('div');
+    actionWrap.style.display = 'grid';
+    actionWrap.style.gap = '8px';
+
+    const mapBtn = document.createElement('button');
+    mapBtn.className = 'btn btn-light';
+    mapBtn.textContent = '地圖';
+    mapBtn.addEventListener('click', () => {
+      openGoogleMapByQuery(attractionMapQuery(item), '此筆景點資料不足，無法搜尋地圖');
+    });
+
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn btn-light';
+    editBtn.textContent = '編輯';
+    editBtn.addEventListener('click', () => openAttractionEditModal(item));
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-light';
+    deleteBtn.textContent = '刪除';
+    deleteBtn.addEventListener('click', async () => {
+      trip.attractions = trip.attractions.filter((a) => a.id !== item.id);
+      await persistTrips();
+      renderAttractions();
+      renderSpotAttractionPresets();
+    });
+
+    row.appendChild(info);
+    actionWrap.appendChild(mapBtn);
+    actionWrap.appendChild(editBtn);
+    actionWrap.appendChild(deleteBtn);
+    row.appendChild(actionWrap);
+    attractionListEl.appendChild(row);
+  });
+}
+
+function openAttractionEditModal(item) {
+  editingAttractionId = item.id;
+  attractionEditCountryEl.value = item.country || '';
+  attractionEditRegionEl.value = item.region || '';
+  attractionEditNameEl.value = item.name || '';
+  attractionEditAddressEl.value = item.address || '';
+  attractionEditDurationEl.value = item.duration || '';
+  attractionEditTicketEl.value = item.ticket || '';
+  attractionEditNoteEl.value = item.note || '';
+  attractionEditModalEl.classList.add('show');
+  attractionEditModalEl.setAttribute('aria-hidden', 'false');
+}
+
+function closeAttractionEditModal() {
+  editingAttractionId = null;
+  attractionEditModalEl.classList.remove('show');
+  attractionEditModalEl.setAttribute('aria-hidden', 'true');
+}
+
 function renderMealPresets() {
   const trip = currentTrip();
   const selectEl = document.getElementById('mealPresetSelect');
@@ -586,6 +741,37 @@ function renderMealPresets() {
     opt.textContent = `${region}｜${name} [${booked}]`;
     selectEl.appendChild(opt);
   });
+}
+
+function renderSpotAttractionPresets() {
+  const trip = currentTrip();
+  const selectEl = document.getElementById('spotAttractionPresetSelect');
+  if (!selectEl) return;
+  selectEl.innerHTML = '';
+  if (!trip) return;
+  ensureAttractions(trip);
+
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = trip.attractions.length ? '請選擇景點規劃項目' : '目前沒有景點規劃項目';
+  selectEl.appendChild(placeholder);
+
+  trip.attractions.forEach((item, idx) => {
+    const opt = document.createElement('option');
+    opt.value = String(idx);
+    const region = item.region || '未分類';
+    const name = item.name || '未命名景點';
+    opt.textContent = `${region}｜${name}`;
+    selectEl.appendChild(opt);
+  });
+}
+
+function attractionNoteForSpot(item) {
+  const parts = [];
+  if (isNonEmptyText(item.duration)) parts.push(`停留：${item.duration}`);
+  if (isNonEmptyText(item.ticket)) parts.push(`門票/預約：${item.ticket}`);
+  if (isNonEmptyText(item.note)) parts.push(item.note);
+  return parts.join('\n');
 }
 
 function renderStayPresets() {
@@ -1330,6 +1516,7 @@ function loadDayEditor() {
   if (!day) return;
   renderTrafficTypeOptions();
   renderSpotTrafficPresets();
+  renderSpotAttractionPresets();
   renderMealPresets();
   renderStayPresets();
   ensureDaySnacks(day);
@@ -1381,6 +1568,7 @@ document.getElementById('newTripForm').addEventListener('submit', (e) => {
     days: buildDays(startDate, endDate),
     todo: [],
     food: [],
+    attractions: [],
     stays: [],
     traffic: [],
     trafficTypeOptions: [...DEFAULT_TRAFFIC_TYPES]
@@ -1552,6 +1740,84 @@ document.getElementById('backToTripMainFromFood').addEventListener('click', () =
 
 foodRegionFilterEl.addEventListener('change', renderFood);
 
+document.getElementById('openAttractions').addEventListener('click', () => {
+  renderAttractions();
+  show('attractions-view');
+});
+
+document.getElementById('backToTripMainFromAttractions').addEventListener('click', () => show('trip-main'));
+
+attractionRegionFilterEl.addEventListener('change', renderAttractions);
+
+document.getElementById('addAttractionBtn').addEventListener('click', async () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  ensureAttractions(trip);
+
+  const country = attractionCountryInputEl.value.trim();
+  const region = attractionRegionInputEl.value.trim();
+  const name = attractionNameInputEl.value.trim();
+  const address = attractionAddressInputEl.value.trim();
+  const duration = attractionDurationInputEl.value.trim();
+  const ticket = attractionTicketInputEl.value.trim();
+  const note = attractionNoteInputEl.value.trim();
+
+  if (!name) {
+    alert('請輸入景點名稱');
+    return;
+  }
+
+  trip.attractions.push({
+    id: uid('attraction'),
+    country,
+    region,
+    name,
+    address,
+    duration,
+    ticket,
+    note
+  });
+
+  attractionCountryInputEl.value = '';
+  attractionRegionInputEl.value = '';
+  attractionNameInputEl.value = '';
+  attractionAddressInputEl.value = '';
+  attractionDurationInputEl.value = '';
+  attractionTicketInputEl.value = '';
+  attractionNoteInputEl.value = '';
+  await persistTrips();
+  renderAttractions();
+  renderSpotAttractionPresets();
+});
+
+attractionEditCancelBtnEl.addEventListener('click', closeAttractionEditModal);
+attractionEditSaveBtnEl.addEventListener('click', async () => {
+  const trip = currentTrip();
+  if (!trip || !editingAttractionId) return;
+  ensureAttractions(trip);
+  const item = trip.attractions.find((a) => a.id === editingAttractionId);
+  if (!item) return;
+
+  const name = attractionEditNameEl.value.trim();
+  if (!name) {
+    alert('請輸入景點名稱');
+    return;
+  }
+
+  item.country = attractionEditCountryEl.value.trim();
+  item.region = attractionEditRegionEl.value.trim();
+  item.name = name;
+  item.address = attractionEditAddressEl.value.trim();
+  item.duration = attractionEditDurationEl.value.trim();
+  item.ticket = attractionEditTicketEl.value.trim();
+  item.note = attractionEditNoteEl.value.trim();
+
+  await persistTrips();
+  closeAttractionEditModal();
+  renderAttractions();
+  renderSpotAttractionPresets();
+});
+
 document.getElementById('addFoodBtn').addEventListener('click', async () => {
   const trip = currentTrip();
   if (!trip) return;
@@ -1688,6 +1954,28 @@ document.getElementById('openSpotMapBtn').addEventListener('click', () => {
   const query = spotAddress ? `${spotName} ${spotAddress}` : spotName;
   const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
   window.open(url, '_blank', 'noopener');
+});
+
+document.getElementById('applySpotAttractionPresetBtn').addEventListener('click', () => {
+  const trip = currentTrip();
+  if (!trip) return;
+  ensureAttractions(trip);
+  const selectEl = document.getElementById('spotAttractionPresetSelect');
+  if (selectEl.value === '') {
+    alert('請先選擇要套用的景點規劃項目');
+    return;
+  }
+
+  const idx = Number(selectEl.value);
+  if (!Number.isInteger(idx) || idx < 0 || idx >= trip.attractions.length) {
+    alert('選擇的景點規劃項目無效');
+    return;
+  }
+
+  const item = trip.attractions[idx];
+  document.getElementById('spotName').value = item.name || '';
+  document.getElementById('spotAddress').value = item.address || '';
+  document.getElementById('spotNote').value = attractionNoteForSpot(item);
 });
 
 document.getElementById('openTransportMapBtn').addEventListener('click', () => {
@@ -1972,6 +2260,7 @@ async function init() {
     state.trips.forEach((trip) => {
       trip.theme = normalizeTheme(trip.theme);
       ensureStayPresets(trip);
+      ensureAttractions(trip);
     });
     state.snapshots = await loadSnapshotsFromDb();
   } catch {
